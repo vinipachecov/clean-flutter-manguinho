@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../data/http/http_error.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart';
 
@@ -24,8 +25,10 @@ class HttpAdapter {
   Map _handleResponse(Response response) {
     if (response.statusCode == 200) {
       return response.body.isEmpty ? null : jsonDecode(response.body);
-    } else {
+    } else if (response.statusCode == 204) {
       return null;
+    } else {
+      throw HttpError.badRequest;
     }
   }
 }
