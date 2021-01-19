@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../pages/login_page.dart';
+import '../pages/login/login_page.dart';
 
 class App extends StatelessWidget {
 
@@ -14,7 +14,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'ViniciusDev',
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: LoginPage(null),
       theme: ThemeData(
         primaryColor: primaryColor,
         primaryColorDark: primaryColorDark,
