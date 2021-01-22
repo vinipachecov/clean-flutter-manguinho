@@ -140,4 +140,17 @@ void main() {
       isNotNull
     );
   });
+
+  testWidgets('Should enable button if form is invalid', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isFormValidController.add(false);
+    await tester.pump();
+
+    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    expect(
+      button.onPressed,
+      isNull
+    );
+  });
 }
