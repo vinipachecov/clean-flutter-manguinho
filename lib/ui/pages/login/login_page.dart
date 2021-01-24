@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../components/components.dart';
 import './login_presenter.dart';
-
 class LoginPage extends StatefulWidget {
   final LoginPresenter presenter;
 
@@ -27,37 +26,16 @@ class _LoginPageState extends State<LoginPage> {
           //
           widget.presenter.isLoadingStream.listen((isLoading) {
             if (isLoading) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                child: SimpleDialog(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 10),
-                        Text('Aguarde..', textAlign: TextAlign.center,)
-                      ]
-                    )
-                  ],
-                )
-              );
+              showLoading(context);
             }
             else {
-              if (Navigator.canPop(context)) {
-                Navigator.of(context).pop();
-              }
+              hideLoading(context);
             }
           });
 
           widget.presenter.mainErrorStream.listen((error) {
             if (error != null) {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red[900],
-                  content: Text(error, textAlign: TextAlign.center,)
-              ));
+              showErrorMessage(context, error);
             }
           });
           return  SingleChildScrollView(
