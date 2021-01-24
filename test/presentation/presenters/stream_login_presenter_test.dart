@@ -88,4 +88,17 @@ void main() {
     sut.validateEmail(password);
     sut.validatePassword(password);
   });
+
+  test('Should emit null password error if validation fails', () async {
+
+    sut.emailErrorStream.listen((expectAsync1((error) => expect(error, null))));
+    sut.passwordErrorStream.listen((expectAsync1((error) => expect(error, null))));
+
+    expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
+
+    sut.validateEmail(password);
+    // require to create space for stream to emit both "false" and "true" value
+    await Future.delayed(Duration.zero);
+    sut.validatePassword(password);
+  });
 }
