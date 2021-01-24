@@ -39,6 +39,7 @@ void main() {
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
