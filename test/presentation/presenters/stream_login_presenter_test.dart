@@ -1,4 +1,5 @@
 
+import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -8,10 +9,12 @@ import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import 'package:clean_flutter_manguinho/presentation/presenters/presenters.dart';
 
 class ValidationSpy extends Mock implements Validation {}
+class AuthenticationSpy extends Mock implements Authentication {}
 
 void main() {
   StreamLoginPresenter sut;
   ValidationSpy validation;
+  AuthenticationSpy authentication;
   String email;
   String password;
 
@@ -23,7 +26,8 @@ void main() {
 
   setUp(() {
     validation = ValidationSpy();
-    sut = StreamLoginPresenter(validation: validation);
+    authentication = AuthenticationSpy();
+    sut = StreamLoginPresenter(validation: validation, authentication: authentication);
     email = faker.internet.email();
     password = faker.internet.password();
   });
@@ -100,5 +104,13 @@ void main() {
     // require to create space for stream to emit both "false" and "true" value
     await Future.delayed(Duration.zero);
     sut.validatePassword(password);
+  });
+
+  test('Should call authentication with correct values', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    await sut.auth();
+    verify(authentication.auth(AuthenticationParams(email: email, secret: password)));
   });
 }
