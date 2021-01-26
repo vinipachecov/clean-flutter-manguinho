@@ -11,7 +11,14 @@ class ValidationComposite implements Validation {
 
   @override
   String validate({@required String field, @required String value}) {
-
+    String error;
+    for (final validation in validations) {
+        final error = validation.validate(value);
+        if (error?.isNotEmpty == true) {
+          return error;
+        }
+    }
+    return error;
   }
 }
 
@@ -24,15 +31,15 @@ class FieldValidationSpy extends Mock implements FieldValidation {}
     ValidationComposite sut;
 
   void mockValidation1(String error) {
-    when(validation1.field).thenReturn(error);
+    when(validation1.validate(any)).thenReturn(error);
   }
 
   void mockValidation2(String error) {
-    when(validation2.field).thenReturn(error);
+    when(validation2.validate(any)).thenReturn(error);
   }
 
   void mockValidation3(String error) {
-    when(validation3.field).thenReturn(error);
+    when(validation3.validate(any)).thenReturn(error);
   }
 
   setUp(() {
@@ -57,5 +64,15 @@ class FieldValidationSpy extends Mock implements FieldValidation {}
     final error = sut.validate(field: 'any_field', value: 'any_value');
 
     expect(error, null);
+  });
+
+   test('Should return first error', () {
+    mockValidation1('error_1');
+    mockValidation2('error_2');
+    mockValidation3('error_3');
+
+    final error = sut.validate(field: 'any_field', value: 'any_value');
+
+    expect(error, 'error_1');
   });
 }
