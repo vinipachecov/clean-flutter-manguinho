@@ -1,21 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../pages/login/login_page.dart';
 
-class App extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
-    final primaryColor = Color.fromRGBO(136, 14, 79, 1);
-    final primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
-    final primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
-    return MaterialApp(
-      title: 'ViniciusDev',
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(null),
-      theme: ThemeData(
+ThemeData makeAppTheme() {
+  final primaryColor = Color.fromRGBO(136, 14, 79, 1);
+  final primaryColorDark = Color.fromRGBO(96, 0, 39, 1);
+  final primaryColorLight = Color.fromRGBO(188, 71, 123, 1);
+  return ThemeData(
         primaryColor: primaryColor,
         primaryColorDark: primaryColorDark,
         primaryColorLight: primaryColorLight,
@@ -46,9 +35,6 @@ class App extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)
           )
-
         )
-      ),
-    );
-  }
+      );
 }

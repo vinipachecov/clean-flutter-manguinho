@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:meta/meta.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../domain/helpers/helpers.dart';
@@ -19,7 +20,7 @@ class LoginState {
     &&  password != null;
 }
 
-class StreamLoginPresenter {
+class StreamLoginPresenter implements LoginPresenter {
   var _controller = StreamController<LoginState>.broadcast();
   final Validation validation;
   final Authentication authentication;
