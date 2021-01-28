@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:meta/meta.dart';
-import '../../domain/usecases/usecases.dart';
-import '../../domain/helpers/helpers.dart';
-import '../protocols/protocols.dart';
+
+import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
+import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
+import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
+import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 
 
 class LoginState {

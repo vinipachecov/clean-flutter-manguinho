@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:clean_flutter_manguinho/data/http/http_client.dart';
 
-import '../../data/http/http_error.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart';
+import '../../data/http/http_error.dart';
 
 class HttpAdapter implements HttpClient {
   final Client client;
