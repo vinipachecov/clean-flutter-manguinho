@@ -21,7 +21,6 @@ dev_dependencies:
   test:
   mockito:
   faker:
-  provider:
   get:
   equatable:
 

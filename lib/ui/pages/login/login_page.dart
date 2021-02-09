@@ -1,40 +1,28 @@
 import 'package:clean_flutter_manguinho/ui/pages/login/components/email_input.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../components/components.dart';
 import './login_presenter.dart';
 import './components/components.dart';
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   final LoginPresenter presenter;
 
   LoginPage(this.presenter);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-
-  void _hideKeyboard() {
-    final currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.presenter.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+
+    void _hideKeyboard() {
+      final currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+    }
+
     return Scaffold(
       body: Builder(
         builder: (context) {
           //
-          widget.presenter.isLoadingStream.listen((isLoading) {
+          presenter.isLoading.listen((isLoading) {
             if (isLoading) {
               showLoading(context);
             }
@@ -43,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
 
-          widget.presenter.mainErrorStream.listen((error) {
+          presenter.mainError.listen((error) {
             if (error != null) {
               showErrorMessage(context, error);
             }
@@ -58,9 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                 Headline1(text: 'Login',),
                 Padding(
                   padding: const EdgeInsets.all(32),
-                  child: Provider(
-                    create: (context) => widget.presenter,
-                    child: Form(
+                  child:  Form(
                       child: Column(
                         children: [
                           EmailInput(),
@@ -77,7 +63,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                )
               ],
             ),
         ),
