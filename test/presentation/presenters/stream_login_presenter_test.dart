@@ -1,5 +1,4 @@
 
-import 'package:clean_flutter_manguinho/presentation/presenters/get_login_presenter.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
@@ -16,7 +15,7 @@ class ValidationSpy extends Mock implements Validation {}
 class AuthenticationSpy extends Mock implements Authentication {}
 
 void main() {
-  GetxLoginPresenter sut;
+  StreamLoginPresenter sut;
   ValidationSpy validation;
   AuthenticationSpy authentication;
   String email;
@@ -41,7 +40,7 @@ void main() {
   setUp(() {
     validation = ValidationSpy();
     authentication = AuthenticationSpy();
-    sut = GetxLoginPresenter(validation: validation, authentication: authentication);
+    sut = StreamLoginPresenter(validation: validation, authentication: authentication);
     email = faker.internet.email();
     password = faker.internet.password();
     mockValidation();
@@ -139,13 +138,13 @@ void main() {
     await sut.auth();
   });
 
-   test('Should emit correct events on InvalidCredentialsError', () async {
+   test('Should emit correct events on UnexpectedError', () async {
      mockAuthenticationError(DomainError.invalidCredentials);
 
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emits(false));
     sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Credenciais inválidas.')));
 
     await sut.auth();
@@ -157,9 +156,16 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
 
-    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(sut.isLoadingStream, emits(false));
     sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Algo errado aconteceu. Tente novamente em breve.')));
 
     await sut.auth();
+  });
+
+  test('Should not emit after dispose', () async {
+    expectLater(sut.emailErrorStream, neverEmits(null));
+
+    sut.dispose();
+    sut.validateEmail(email);
   });
 }
