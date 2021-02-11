@@ -7,7 +7,7 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/data/http/http_client.dart';
-import 'package:clean_flutter_manguinho/data/usecases/remote_authentication.dart';
+import 'package:clean_flutter_manguinho/data/usecases/authentication/remote_authentication.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
 import 'package:clean_flutter_manguinho/data/http/http.dart';

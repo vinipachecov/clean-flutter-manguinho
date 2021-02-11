@@ -3,10 +3,10 @@ import 'package:clean_flutter_manguinho/data/http/http.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
 import 'package:meta/meta.dart';
 
-import '../../domain/usecases/usecases.dart';
-import '../../domain/entities/entities.dart';
-import '../models/models.dart';
-import '../http/http_client.dart';
+import '../../../domain/usecases/usecases.dart';
+import '../../../domain/entities/entities.dart';
+import '../../models/models.dart';
+import '../../http/http_client.dart';
 
 class RemoteAuthentication implements Authentication {
   final HttpClient httpClient;
