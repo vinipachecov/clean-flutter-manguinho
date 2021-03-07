@@ -14,3 +14,13 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+Mock
+Só quer capturar mas não quer mockar nada
+
+Spy
+Para pegar e capturar valores e mockar resultados
+
+Stub
+Mockar o resultado e não está interessado em caputrar nada
