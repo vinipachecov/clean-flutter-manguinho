@@ -1,4 +1,5 @@
 import 'package:clean_flutter_manguinho/ui/pages/login/components/email_input.dart';
+import 'package:clean_flutter_manguinho/utils/i18n/resources.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../components/components.dart';
@@ -69,7 +70,7 @@ class LoginPage extends StatelessWidget {
                           FlatButton.icon(
                               onPressed: () {},
                               icon: Icon(Icons.person),
-                              label: Text('Criar Conta'))
+                              label: Text(R.strings.addAccount))
                         ],
                       ),
                     ),
