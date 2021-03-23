@@ -2,6 +2,7 @@ import 'package:clean_flutter_manguinho/ui/pages/login/components/email_input.da
 import 'package:clean_flutter_manguinho/utils/i18n/resources.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import '../../helpers/errors/ui_error.dart';
 import '../../components/components.dart';
 import './login_presenter.dart';
 import './components/components.dart';
@@ -34,9 +35,9 @@ class LoginPage extends StatelessWidget {
             }
           });
 
-          presenter.mainErrorStream.listen((error) {
+          presenter.mainErrorStream.listen((UIError error) {
             if (error != null) {
-              showErrorMessage(context, error);
+              showErrorMessage(context, error.description);
             }
           });
 

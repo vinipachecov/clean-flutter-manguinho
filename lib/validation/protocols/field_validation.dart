@@ -1,4 +1,6 @@
+import 'package:clean_flutter_manguinho/presentation/protocols/validation.dart';
+
 abstract class FieldValidation {
   String get field;
-  String validate(String value);
+  ValidationError validate(String value);
 }
