@@ -1,3 +1,4 @@
+import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../login_presenter.dart';
@@ -12,7 +13,7 @@ class LoginButton extends StatelessWidget {
       builder: (context, snapshot) {
         return RaisedButton(
           onPressed: snapshot.data == true ? presenter.auth : null,
-          child: Text('Entrar'.toUpperCase()),
+          child: Text(R.strings.enter.toUpperCase()),
         );
       }
     );

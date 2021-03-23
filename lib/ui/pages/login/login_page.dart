@@ -1,5 +1,5 @@
+import 'package:clean_flutter_manguinho/ui/helpers/i18n/resources.dart';
 import 'package:clean_flutter_manguinho/ui/pages/login/components/email_input.dart';
-import 'package:clean_flutter_manguinho/utils/i18n/resources.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../helpers/errors/ui_error.dart';
