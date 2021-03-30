@@ -1,11 +1,10 @@
 
-
-
-
-import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
+
+import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
+import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 
 import 'package:clean_flutter_manguinho/data/http/http_client.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
@@ -55,5 +54,13 @@ void main() {
       'password': params.password,
       'passwordConfirmation': params.passwordConfirmation,
     }));
+  });
+
+   test('Should throw UnexpectedError if HttpClient returns 400', () async {
+     mockhttpError(HttpError.badRequest);
+
+    final future = sut.add(params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }

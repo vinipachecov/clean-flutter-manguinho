@@ -1,4 +1,5 @@
 import 'package:clean_flutter_manguinho/data/http/http.dart';
+import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 
 
 import 'package:meta/meta.dart';
@@ -14,12 +15,16 @@ class RemoteAddAccount {
   RemoteAddAccount({@required this.httpClient, @required this.url});
 
   Future<void> add(AddAccountParams params) async {
-    final body = RemoteAddAccountParams.fromDomain(params).toJson();
+    try {
+      final body = RemoteAddAccountParams.fromDomain(params).toJson();
       await httpClient.request(
           url: url,
           method: 'post',
           body: body
       );
+    } catch (e) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
