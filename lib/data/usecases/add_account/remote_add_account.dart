@@ -5,7 +5,6 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:meta/meta.dart';
 
 import '../../../domain/usecases/usecases.dart';
-import '../../../domain/entities/entities.dart';
 import '../../http/http_client.dart';
 
 class RemoteAddAccount {
@@ -22,12 +21,13 @@ class RemoteAddAccount {
           method: 'post',
           body: body
       );
-    } catch (e) {
-      throw DomainError.unexpected;
+    } on HttpError catch (error) {
+      throw error == HttpError.forbidden
+        ? DomainError.emailInUse
+        : DomainError.unexpected;
     }
   }
 }
-
 
 class RemoteAddAccountParams {
 
