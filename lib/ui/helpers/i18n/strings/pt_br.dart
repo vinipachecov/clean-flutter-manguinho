@@ -12,4 +12,6 @@ class PtBr implements Translations {
   String get msgInvalidField  => 'Campo inválido';
   String get msgInvalidCredentials => 'Credenciais inválidas.';
   String get msgUnexpected => 'Algo errado aconteceu. Tente novamente em breve.';
+  String get name => 'Nome';
+  String get confirmPassword => 'Confirmar Senha';
 }
