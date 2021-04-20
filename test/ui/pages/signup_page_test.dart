@@ -31,7 +31,7 @@ void main() {
     when(presenter.nameErrorStream).thenAnswer((_) => nameErrorController.stream);
     when(presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
-    when(presenter.passwordErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
+    when(presenter.passwordConfirmationErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
   }
 
   void closeStreams() {
@@ -156,6 +156,27 @@ void main() {
 
     expect(
       find.descendant(of: find.bySemanticsLabel('Nome'), matching: find.byType(Text)),
+      findsOneWidget
+    );
+  });
+
+  testWidgets('Should present password error', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    passwordErrorController.add(UIError.invalidField);
+    await tester.pump();
+    expect(find.text('Campo inválido'), findsOneWidget);
+
+    passwordErrorController.add(UIError.requiredField);
+    await tester.pump();
+    expect(find.text('Campo obrigatório'), findsOneWidget);
+
+
+    passwordErrorController.add(null);
+    await tester.pump();
+
+    expect(
+      find.descendant(of: find.bySemanticsLabel('Senha'), matching: find.byType(Text)),
       findsOneWidget
     );
   });
