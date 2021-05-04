@@ -20,6 +20,8 @@ void main() {
   StreamController<UIError> passwordConfirmationErrorController;
   StreamController<UIError> nameErrorController;
   StreamController<bool> isFormValidController;
+  StreamController<bool> isLoadingController;
+
 
 
   void initStreams() {
@@ -28,6 +30,7 @@ void main() {
     passwordConfirmationErrorController =  StreamController<UIError>();
     nameErrorController =  StreamController<UIError>();
     isFormValidController = StreamController<bool>();
+    isLoadingController = StreamController<bool>();
   }
 
   void mockStreams() {
@@ -35,7 +38,8 @@ void main() {
     when(presenter.emailErrorStream).thenAnswer((_) => emailErrorController.stream);
     when(presenter.passwordErrorStream).thenAnswer((_) => passwordErrorController.stream);
     when(presenter.passwordConfirmationErrorStream).thenAnswer((_) => passwordConfirmationErrorController.stream);
-    when(presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
+     when(presenter.isFormValidStream).thenAnswer((_) => isFormValidController.stream);
+    when(presenter.isLoadingStream).thenAnswer((_) => isLoadingController.stream);
   }
 
   void closeStreams() {
@@ -44,6 +48,7 @@ void main() {
     nameErrorController.close();
     passwordConfirmationErrorController.close();
     isFormValidController.close();
+    isLoadingController.close();
   }
 
   tearDown(() {
@@ -241,5 +246,26 @@ void main() {
     await tester.pump();
 
     verify(presenter.signUp()).called(1);
+  });
+
+
+  testWidgets('Should present loading', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true);
+    await tester.pump();
+    isLoadingController.add(false);
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }
