@@ -18,6 +18,7 @@ void main() {
   GetxSignUpPresenter sut;
   ValidationSpy validation;
   String email;
+  String password;
   String name;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(field: field == null ? anyNamed('field') : field, value: anyNamed('value')));
@@ -34,6 +35,7 @@ void main() {
     );
     email = faker.internet.email();
     name = faker.person.name();
+    password = faker.internet.password();
     mockValidation();
   });
 
@@ -96,8 +98,8 @@ void main() {
     sut.nameErrorStream.listen((expectAsync1((error) => expect(error, UIError.requiredField))));
     sut.isFormValidStream.listen((expectAsync1((isValid) => expect(isValid, false))));
 
-    sut.validateName(email);
-    sut.validateName(email);
+    sut.validateName(name);
+    sut.validateName(name);
   });
 
    test('Should emit null name if validation succeeds', () {
@@ -108,5 +110,41 @@ void main() {
 
     sut.validateName(name);
     sut.validateName(name);
+  });
+
+   test('Should call Validation with correct password', () {
+    sut.validatePassword(password);
+
+    verify(validation.validate(field: 'password', value: password)).called(1);
+  });
+
+  test('Should emit password invalidField error if password is invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+
+    sut.passwordErrorStream.listen((expectAsync1((error) => expect(error, UIError.invalidField))));
+    sut.isFormValidStream.listen((expectAsync1((isValid) => expect(isValid, false))));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+  });
+
+  test('Should emit password requiredField error if password is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+
+    sut.passwordErrorStream.listen((expectAsync1((error) => expect(error, UIError.requiredField))));
+    sut.isFormValidStream.listen((expectAsync1((isValid) => expect(isValid, false))));
+
+    sut.validatePassword(password);
+    sut.validatePassword(password);
+  });
+
+   test('Should emit null password if validation succeeds', () {
+    mockValidation();
+
+    sut.nameErrorStream.listen((expectAsync1((error) => expect(error, null))));
+    sut.isFormValidStream.listen((expectAsync1((isValid) => expect(isValid, false))));
+
+    sut.validateName(password);
+    sut.validateName(password);
   });
 }
