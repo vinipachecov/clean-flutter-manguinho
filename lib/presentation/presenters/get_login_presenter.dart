@@ -1,7 +1,6 @@
 import 'package:clean_flutter_manguinho/ui/helpers/errors/errors.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
-
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
@@ -28,8 +27,6 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Stream<bool> get isFormValidStream => _isFormValid.stream;
   Stream<bool> get isLoadingStream => _isLoading.stream;
   Stream<String> get navigateToStream => _navigateTo.stream;
-
-
 
   GetxLoginPresenter({@required this.validation, @required this.authentication, @required this.saveCurrentAccount});
 

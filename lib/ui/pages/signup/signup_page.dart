@@ -1,3 +1,4 @@
+import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/i18n/resources.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,13 @@ class SignUpPage extends StatelessWidget {
               hideLoading(context);
             }
           });
+
+            presenter.mainErrorStream.listen((UIError error) {
+            if (error != null) {
+              showErrorMessage(context, error.description);
+            }
+          });
+
 
           return GestureDetector(
             onTap: _hideKeyboard,

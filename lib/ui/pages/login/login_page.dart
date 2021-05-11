@@ -7,11 +7,10 @@ import '../../components/components.dart';
 import './login_presenter.dart';
 import './components/components.dart';
 import 'package:get/get.dart';
+
 class LoginPage extends StatelessWidget {
   final LoginPresenter presenter;
-
   LoginPage(this.presenter);
-
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +28,7 @@ class LoginPage extends StatelessWidget {
           presenter.isLoadingStream.listen((isLoading) {
             if (isLoading) {
               showLoading(context);
-            }
-            else {
+            } else {
               hideLoading(context);
             }
           });
@@ -50,36 +48,39 @@ class LoginPage extends StatelessWidget {
           return GestureDetector(
             onTap: _hideKeyboard,
             child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                LoginHeader(),
-                Headline1(text: 'Login',),
-                Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Provider(
-                    create: (context) => presenter,
-                    child: Form(
-                      child: Column(
-                        children: [
-                          EmailInput(),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8, bottom: 32),
-                            child: PasswordInput(),
-                          ),
-                          LoginButton(),
-                          FlatButton.icon(
-                              onPressed: () {},
-                              icon: Icon(Icons.person),
-                              label: Text(R.strings.addAccount))
-                        ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  LoginHeader(),
+                  Headline1(
+                    text: 'Login',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Provider(
+                      create: (context) => presenter,
+                      child: Form(
+                        child: Column(
+                          children: [
+                            EmailInput(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8, bottom: 32),
+                              child: PasswordInput(),
+                            ),
+                            LoginButton(),
+                            FlatButton.icon(
+                                onPressed: () {},
+                                icon: Icon(Icons.person),
+                                label: Text(R.strings.addAccount))
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
-        ),
           );
         },
       ),
