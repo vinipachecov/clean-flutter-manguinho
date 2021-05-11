@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/i18n/resources.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
-import 'package:flutter/material.dart';
 import '../../components/components.dart';
 import 'components/components.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +40,11 @@ class SignUpPage extends StatelessWidget {
             }
           });
 
+          presenter.navigateToStream.listen((page) {
+            if (page?.isNotEmpty == true) {
+              Get.offAllNamed(page);
+            }
+          });
 
           return GestureDetector(
             onTap: _hideKeyboard,
