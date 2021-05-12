@@ -271,6 +271,18 @@ void main() {
     verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
   });
 
+  test('Should emit correct events on Authentication success', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+
+    expectLater(sut.isLoadingStream, emits(true));
+
+    await sut.signUp();
+  });
+
     test('Should emit correct events on UnexpectedError', () async {
      mockAddAccountError(DomainError.unexpected);
 
@@ -298,4 +310,5 @@ void main() {
 
     await sut.signUp();
   });
+
 }
