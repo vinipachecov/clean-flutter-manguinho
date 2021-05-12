@@ -19,6 +19,7 @@ void main() {
   GetxSignUpPresenter sut;
   AddAccountSpy addAccount;
   ValidationSpy validation;
+  SaveCurrentAccountSpy saveCurrentAccount;
   String email;
   String password;
   String passwordConfirmation;
@@ -43,10 +44,13 @@ void main() {
     mockValidationCall(field).thenReturn(value);
   }
 
+  PostExpectation mockSaveCurrentAccountCall() => when(saveCurrentAccount.save(any));
+
   setUp(() {
     validation = ValidationSpy();
     addAccount = AddAccountSpy();
-    sut = GetxSignUpPresenter(validation: validation, addAccount: addAccount);
+    saveCurrentAccount = SaveCurrentAccountSpy();
+    sut = GetxSignUpPresenter(validation: validation, addAccount: addAccount, saveCurrentAccount: saveCurrentAccount);
     email = faker.internet.email();
     name = faker.person.name();
     password = faker.internet.password();
@@ -54,6 +58,7 @@ void main() {
     token = faker.guid.guid();
     mockValidation();
     mockAddAccount();
+    mockSaveCurrentAccountCall();
   });
 
   test('Should call Validation with correct email', () {
@@ -249,4 +254,15 @@ void main() {
     verify(addAccount.add(AddAccountParams(name: name, email: email, password: password, passwordConfirmation: passwordConfirmation)))
         .called(1);
   });
+
+  test('Should call SaveCurrentAccount with correct values', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    await sut.signUp();
+    verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+
 }
