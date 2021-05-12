@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 
-
 class GetxSignUpPresenter extends GetxController {
   final Validation validation;
   String _email;
@@ -20,11 +19,11 @@ class GetxSignUpPresenter extends GetxController {
 
   Stream<UIError> get emailErrorStream => _emailError.stream;
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
-  Stream<UIError> get passwordConfirmationErrorStream => _passwordConfirmationError.stream;
+  Stream<UIError> get passwordConfirmationErrorStream =>
+      _passwordConfirmationError.stream;
   Stream<UIError> get mainErrorStream => _mainError.stream;
   Stream<UIError> get nameErrorStream => _nameError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
-
 
   GetxSignUpPresenter({@required this.validation});
 
@@ -40,12 +39,13 @@ class GetxSignUpPresenter extends GetxController {
     _validateForm();
   }
 
-
   void validatePasswordConfirmation(String password) {
     _passwordConfirmation = password;
-    _passwordConfirmationError.value = _validateField(field: 'passwordConfirmation', value: password);
+    _passwordConfirmationError.value =
+        _validateField(field: 'passwordConfirmation', value: password);
     _validateForm();
   }
+
   void validateName(String name) {
     _name = name;
     _nameError.value = _validateField(field: 'name', value: name);
@@ -54,21 +54,27 @@ class GetxSignUpPresenter extends GetxController {
 
   UIError _validateField({String field, String value}) {
     final error = validation.validate(field: field, value: value);
-    switch(error) {
-      case ValidationError.invalidField: return UIError.invalidField;
-      case ValidationError.requiredField: return UIError.requiredField;
+    switch (error) {
+      case ValidationError.invalidField:
+        return UIError.invalidField;
+      case ValidationError.requiredField:
+        return UIError.requiredField;
       default:
         return null;
     }
   }
 
   void _validateForm() {
-      _isFormValid.value =  false;
+    _isFormValid.value = _emailError.value == null
+        && _passwordError.value == null
+        && _nameError.value == null
+        && _passwordConfirmationError.value == null
+        && _email != null
+        && _password != null
+        && _passwordConfirmation != null;
   }
 
-  Future<void> auth() async {
-
-  }
+  Future<void> auth() async {}
 
   void dispose() {}
 }
