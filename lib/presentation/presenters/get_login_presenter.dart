@@ -76,6 +76,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
       _isLoading.value = false;
     }
   }
+  void dispose() {
 
-  void dispose() {}
+  }
 }

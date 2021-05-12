@@ -1,3 +1,5 @@
+import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
+
 import 'package:clean_flutter_manguinho/ui/helpers/errors/errors.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
@@ -19,6 +21,7 @@ class GetxSignUpPresenter extends GetxController {
   var _passwordError = Rx<UIError>();
   var _passwordConfirmationError = Rx<UIError>();
   var _isFormValid = false.obs;
+  var _isLoading = false.obs;
 
   Stream<UIError> get emailErrorStream => _emailError.stream;
   Stream<UIError> get passwordErrorStream => _passwordError.stream;
@@ -27,6 +30,7 @@ class GetxSignUpPresenter extends GetxController {
   Stream<UIError> get mainErrorStream => _mainError.stream;
   Stream<UIError> get nameErrorStream => _nameError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
+  Stream<bool> get isLoadingStream => _isLoading.stream;
 
   GetxSignUpPresenter({@required this.validation, @required this.addAccount, @required this.saveCurrentAccount});
 
@@ -78,11 +82,23 @@ class GetxSignUpPresenter extends GetxController {
   }
 
   Future<void> signUp() async {
-       final account = await addAccount.add(AddAccountParams(
+    _isLoading.value = true;
+    try {
+      final account = await addAccount.add(AddAccountParams(
           email: _email,
           name: _name,
           password: _password,
           passwordConfirmation: _passwordConfirmation));
         await saveCurrentAccount.save(account);
+    } on DomainError catch (error) {
+      switch (error) {
+        case DomainError.invalidCredentials:
+          _mainError.value = UIError.invalidCredentials;
+          break;
+        default:
+          _mainError.value = UIError.unexpected;
+      }
+      _isLoading.value = false;
+    }
   }
 }
