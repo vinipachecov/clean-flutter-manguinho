@@ -2,9 +2,11 @@ import 'package:clean_flutter_manguinho/ui/helpers/errors/errors.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
+import '../../domain/usecases/usecases.dart';
 
 class GetxSignUpPresenter extends GetxController {
   final Validation validation;
+  final AddAccount addAccount;
   String _email;
   String _password;
   String _passwordConfirmation;
@@ -25,7 +27,7 @@ class GetxSignUpPresenter extends GetxController {
   Stream<UIError> get nameErrorStream => _nameError.stream;
   Stream<bool> get isFormValidStream => _isFormValid.stream;
 
-  GetxSignUpPresenter({@required this.validation});
+  GetxSignUpPresenter({@required this.validation, @required this.addAccount});
 
   void validateEmail(String email) {
     _email = email;
@@ -65,16 +67,20 @@ class GetxSignUpPresenter extends GetxController {
   }
 
   void _validateForm() {
-    _isFormValid.value = _emailError.value == null
-        && _passwordError.value == null
-        && _nameError.value == null
-        && _passwordConfirmationError.value == null
-        && _email != null
-        && _password != null
-        && _passwordConfirmation != null;
+    _isFormValid.value = _emailError.value == null &&
+        _passwordError.value == null &&
+        _nameError.value == null &&
+        _passwordConfirmationError.value == null &&
+        _email != null &&
+        _password != null &&
+        _passwordConfirmation != null;
   }
 
-  Future<void> auth() async {}
-
-  void dispose() {}
+  Future<void> signUp() async {
+       await addAccount.add(AddAccountParams(
+          email: _email,
+          name: _name,
+          password: _password,
+          passwordConfirmation: _passwordConfirmation));
+  }
 }
