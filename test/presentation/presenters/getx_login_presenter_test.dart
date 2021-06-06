@@ -212,4 +212,12 @@ void main() {
 
     await sut.auth();
   });
+
+  test('Should go to signUp page link click', () async {
+    // always remember to set stream tests before function invocation
+    sut.navigateToStream.listen((expectAsync1((page) => expect(page, '/signup'))));
+
+    sut.goToSignUp();
+  });
+
 }
