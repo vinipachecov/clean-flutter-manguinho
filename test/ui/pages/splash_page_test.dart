@@ -12,6 +12,10 @@ void main () {
   SplashPresenterSpy presenter;
   StreamController<String> navigateToController;
 
+  tearDown(() {
+    navigateToController.close();
+  });
+
   Future<void> loadPage(tester) async {
     presenter = SplashPresenterSpy();
     navigateToController = StreamController<String>();

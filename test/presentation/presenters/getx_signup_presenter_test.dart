@@ -334,7 +334,7 @@ void main() {
     await sut.signUp();
   });
 
-    test('Should change page on success', () async {
+  test('Should change page on success', () async {
     sut.validateEmail(email);
     sut.validatePassword(password);
      sut.validatePassword(password);
@@ -345,4 +345,10 @@ void main() {
     await sut.signUp();
   });
 
+  test('Should go to Login page link click', () async {
+    // always remember to set stream tests before function invocation
+    sut.navigateToStream.listen((expectAsync1((page) => expect(page, '/login'))));
+
+    sut.goToLogin();
+  });
 }

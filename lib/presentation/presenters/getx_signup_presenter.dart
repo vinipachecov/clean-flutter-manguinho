@@ -1,12 +1,13 @@
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/errors/errors.dart';
+import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import '../../domain/usecases/usecases.dart';
 
-class GetxSignUpPresenter extends GetxController {
+class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -103,5 +104,10 @@ class GetxSignUpPresenter extends GetxController {
       }
       _isLoading.value = false;
     }
+  }
+
+  @override
+  void goToLogin() {
+    _navigateTo.value = "/login";
   }
 }
