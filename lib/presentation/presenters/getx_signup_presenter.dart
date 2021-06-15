@@ -35,35 +35,43 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   Stream<bool> get isLoadingStream => _isLoading.stream;
   Stream<String> get navigateToStream => _navigateTo.stream;
 
-  GetxSignUpPresenter({@required this.validation, @required this.addAccount, @required this.saveCurrentAccount});
+  GetxSignUpPresenter(
+      {@required this.validation,
+      @required this.addAccount,
+      @required this.saveCurrentAccount});
 
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = _validateField(field: 'email', value: email);
+    _emailError.value = _validateField('email');
     _validateForm();
   }
 
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value = _validateField(field: 'password', value: password);
+    _passwordError.value = _validateField('password');
     _validateForm();
   }
 
   void validatePasswordConfirmation(String password) {
     _passwordConfirmation = password;
-    _passwordConfirmationError.value =
-        _validateField(field: 'passwordConfirmation', value: password);
+    _passwordConfirmationError.value = _validateField('passwordConfirmation');
     _validateForm();
   }
 
   void validateName(String name) {
     _name = name;
-    _nameError.value = _validateField(field: 'name', value: name);
+    _nameError.value = _validateField('name');
     _validateForm();
   }
 
-  UIError _validateField({String field, String value}) {
-    final error = validation.validate(field: field, value: value);
+  UIError _validateField(String field) {
+    final formData = {
+      'name': _name,
+      'email': _email,
+      'password': _password,
+      'passwordConfirmation': _passwordConfirmation
+    };
+    final error = validation.validate(field: field, input: formData);
     switch (error) {
       case ValidationError.invalidField:
         return UIError.invalidField;
@@ -92,8 +100,8 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
           name: _name,
           password: _password,
           passwordConfirmation: _passwordConfirmation));
-        await saveCurrentAccount.save(account);
-        _navigateTo.value = "/surveys";
+      await saveCurrentAccount.save(account);
+      _navigateTo.value = "/surveys";
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emailInUse:
