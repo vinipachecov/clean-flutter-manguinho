@@ -5,7 +5,7 @@ import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
-import '../../domain/usecases/usecases.dart';
+import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 
 class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   final Validation validation;
