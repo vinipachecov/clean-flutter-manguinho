@@ -1,18 +1,8 @@
-import 'package:clean_flutter_manguinho/presentation/protocols/validation.dart';
-import 'package:clean_flutter_manguinho/validation/protocols/field_validation.dart';
 import 'package:faker/faker.dart';
 import 'package:test/test.dart';
-import 'package:meta/meta.dart';
 
-class MinLengthValidation implements FieldValidation {
-  final String field;
-  final int size;
-  MinLengthValidation({@required this.field, @required this.size});
-
-  ValidationError validate(String value) {
-    return value?.length == size ? null : ValidationError.invalidField;
-  }
-}
+import 'package:clean_flutter_manguinho/presentation/protocols/validation.dart';
+import 'package:clean_flutter_manguinho/validation/validators/min_length_validation.dart';
 
 void main() {
   MinLengthValidation sut;
@@ -34,5 +24,9 @@ void main() {
 
   test('Should return null if value equal than min size', () {
     expect(sut.validate(faker.randomGenerator.string(5, min: 5)), null);
+  });
+
+  test('Should return null if value bigger than min size', () {
+    expect(sut.validate(faker.randomGenerator.string(10, min: 6)), null);
   });
 }
