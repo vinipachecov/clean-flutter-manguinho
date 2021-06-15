@@ -11,15 +11,9 @@ void main() {
   });
 
   test('Should return null on invalid cases', () {
-    expect(sut.validate( {
-      'any_field': 'any_value',
-      'other_field': 'other_Value'
-    }), null);
-    expect(sut.validate( {
-      'any_field': 'any_value',
-      'other_field': 'other_Value'
-    }), null);
-    expect(sut.validate( {}), null);
+    expect(sut.validate( {'any_field': 'any_value'}), null);
+    expect(sut.validate( {'other_field': 'other_Value'}), null);
+    expect(sut.validate({}), null);
   });
 
   test('Should return error if values are not equal', () {

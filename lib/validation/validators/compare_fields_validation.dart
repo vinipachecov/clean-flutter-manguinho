@@ -10,7 +10,7 @@ class CompareFieldsValidation  implements FieldValidation {
 
   ValidationError validate(Map input) {
     return input[field] != null &&
-    input[field] != null &&
+    input[fieldToCompare] != null &&
     input[field] != input[fieldToCompare] ? ValidationError.invalidField : null;
   }
 }
