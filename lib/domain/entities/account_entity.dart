@@ -1,12 +1,14 @@
+import 'package:meta/meta.dart';
+class AccountEntity  {
+  final String id;
+  final String question;
+  final String datetime;
+  final String didAnswer;
 
-import 'package:equatable/equatable.dart';
-class AccountEntity extends Equatable {
-  final String token;
-
-  @override
-  List get props => [token];
-
-  AccountEntity(this.token);
-
-  factory AccountEntity.fromJson(Map json) => AccountEntity(json['accessToken']);
+  AccountEntity({
+    @required this.id,
+    @required this.question,
+    @required this.datetime,
+    @required this.didAnswer
+  });
 }
