@@ -1,6 +1,7 @@
-import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
-
 import 'package:meta/meta.dart';
+
+import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
+import 'package:clean_flutter_manguinho/data/http/http_error.dart';
 
 class RemoteSurveyModel {
   final String id;
@@ -17,6 +18,14 @@ class RemoteSurveyModel {
   });
 
   factory RemoteSurveyModel.fromJson(Map json) {
+    if (!json.keys.toSet().containsAll([
+      'id',
+      'question',
+      'date',
+      'didAnswer'
+    ])) {
+      throw HttpError.invalidData;
+    }
     return RemoteSurveyModel(
       id: json['id'],
       question: json['question'],
