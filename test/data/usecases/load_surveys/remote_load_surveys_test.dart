@@ -38,6 +38,9 @@ void main() {
   PostExpectation mockRequest() =>
     when(httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
 
+  void mockHttpError(error) =>
+    mockRequest().thenThrow(error);
+
   List<Map> mockValidData() => [
         {
           'id': faker.guid.guid(),
@@ -91,6 +94,14 @@ void main() {
 
   test('Should throw UnexpectedError if httpClient returns 200 with invalid data', () async {
     mockHttpData([{'invalid_key': 'invalid_key'}]);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if httpClient returns 404', () async {
+     mockHttpError(HttpError.notFound);
 
     final future = sut.load();
 
