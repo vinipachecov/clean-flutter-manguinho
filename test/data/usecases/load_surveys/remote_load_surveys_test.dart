@@ -3,31 +3,14 @@ import 'package:clean_flutter_manguinho/data/http/http_error.dart';
 import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
-import 'package:meta/meta.dart';
 
 
 import 'package:clean_flutter_manguinho/data/http/http_client.dart';
-import 'package:clean_flutter_manguinho/data/models/models.dart';
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
+import 'package:clean_flutter_manguinho/data/usecases/load_surveys/load_surveys.dart';
 
-class RemoteLoadSurveys {
-  final String url;
-  final HttpClient httpClient;
 
-  RemoteLoadSurveys({@required this.url, @required this.httpClient});
-
-  Future<List<SurveyEntity>> load() async {
-    try {
-      final httpResponse = await httpClient.request(url: url, method: 'get');
-      return httpResponse.map<SurveyEntity>((json) => RemoteSurveyModel.fromJson(json).toEntity()).toList();
-    } on HttpError catch(error) {
-      throw error == HttpError.forbidden
-      ? DomainError.accessDenied
-      : DomainError.unexpected;
-    }
-  }
-}
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
