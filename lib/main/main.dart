@@ -22,7 +22,7 @@ class App extends StatelessWidget {
       getPages: [
         GetPage(name: '/', page: makeSplashPage, transition: Transition.fade),
         GetPage(name: '/login', page: makeLoginPage, transition: Transition.fadeIn),
-        GetPage(name: '/signUp', page: makeSignUpPage),
+        GetPage(name: '/signup', page: makeSignUpPage),
         GetPage(name: '/surveys', page: makeSurveysPage),
       ],
     );
