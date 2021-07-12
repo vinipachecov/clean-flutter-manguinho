@@ -1,5 +1,5 @@
 abstract class Translations {
-  String get  msgRequiredField;
+  String get msgRequiredField;
   String get msgInvalidField;
   String get msgInvalidCredentials;
   String get msgUnexpected;
@@ -13,5 +13,6 @@ abstract class Translations {
   String get name;
   String get confirmPassword;
 
+  String get reload;
   String get surveys;
 }
