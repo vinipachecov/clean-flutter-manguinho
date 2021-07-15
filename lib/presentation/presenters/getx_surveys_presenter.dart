@@ -1,4 +1,5 @@
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
+import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,7 @@ import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
-class GetxSurveysPresenter {
+class GetxSurveysPresenter implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
   final _isLoading = true.obs;
