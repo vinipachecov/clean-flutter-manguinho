@@ -1,47 +1,15 @@
-import 'package:clean_flutter_manguinho/domain/entities/survey_entity.dart';
-import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
-import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
-import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
-import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
-import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'package:meta/meta.dart';
+import 'package:clean_flutter_manguinho/domain/entities/survey_entity.dart';
+import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/load_surveys.dart';
 
-class GetxSurveysPresenter {
-  final LoadSurveys loadSurveys;
+import 'package:clean_flutter_manguinho/presentation/presenters/getx_surveys_presenter.dart';
 
-  final _isLoading = true.obs;
-  final _surveys = Rx<List<SurveyViewModel>>();
-
-  Stream<bool> get isLoadingStream => _isLoading.stream;
-  Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
-
-  GetxSurveysPresenter({@required this.loadSurveys});
-
-  Future<void> loadData() async {
-    try {
-      _isLoading.value = true;
-      final surveys = await loadSurveys.load();
-      // Map de SurveyEntity para SurveyViewModel
-      _surveys.value = surveys
-          .map((survey) => SurveyViewModel(
-              id: survey.id,
-              question: survey.question,
-              date: DateFormat('dd MMM yyyy').format(survey.dateTime),
-              didAnswer: survey.didAnswer))
-          .toList();
-      _isLoading.value = false;
-    } on DomainError {
-      _surveys.subject.addError(UIError.unexpected.description);
-    } finally {
-      _isLoading.value = false;
-    }
-  }
-}
+import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
+import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
