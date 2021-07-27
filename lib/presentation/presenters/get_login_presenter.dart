@@ -6,7 +6,6 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 
-
 class GetxLoginPresenter extends GetxController implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
@@ -28,7 +27,10 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Stream<bool> get isLoadingStream => _isLoading.stream;
   Stream<String> get navigateToStream => _navigateTo.stream;
 
-  GetxLoginPresenter({@required this.validation, @required this.authentication, @required this.saveCurrentAccount});
+  GetxLoginPresenter(
+      {@required this.validation,
+      @required this.authentication,
+      @required this.saveCurrentAccount});
 
   void validateEmail(String email) {
     _email = email;
@@ -43,30 +45,30 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   }
 
   UIError _validateField(String field) {
-    final formData = {
-      'email': _email,
-      'password': _password
-    };
+    final formData = {'email': _email, 'password': _password};
     final error = validation.validate(field: field, input: formData);
-    switch(error) {
-      case ValidationError.invalidField: return UIError.invalidField;
-      case ValidationError.requiredField: return UIError.requiredField;
+    switch (error) {
+      case ValidationError.invalidField:
+        return UIError.invalidField;
+      case ValidationError.requiredField:
+        return UIError.requiredField;
       default:
         return null;
     }
   }
 
   void _validateForm() {
-      _isFormValid.value =  _emailError.value == null
-    &&  _passwordError.value == null
-    &&  _email != null
-    &&  _password != null;
+    _isFormValid.value = _emailError.value == null &&
+        _passwordError.value == null &&
+        _email != null &&
+        _password != null;
   }
 
   Future<void> auth() async {
     try {
       _isLoading.value = true;
-      final account = await authentication.auth(AuthenticationParams(email: _email, secret: _password));
+      final account = await authentication
+          .auth(AuthenticationParams(email: _email, secret: _password));
       await saveCurrentAccount.save(account);
       _navigateTo.value = '/surveys';
     } on DomainError catch (error) {
@@ -84,7 +86,6 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   void goToSignUp() {
     _navigateTo.value = "/signup";
   }
-  void dispose() {
 
-  }
+  void dispose() {}
 }
