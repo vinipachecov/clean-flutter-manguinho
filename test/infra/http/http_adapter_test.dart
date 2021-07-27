@@ -1,4 +1,3 @@
-
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
 import 'package:test/test.dart';
@@ -22,16 +21,19 @@ void main() {
 
   group('shared', () {
     test('Should throw ServerError if invalid method is provided', () async {
-      final future = sut.request(url: url, method: 'invalid-method', body: { 'any_key': 'any_value'});
+      final future = sut.request(
+          url: url, method: 'invalid-method', body: {'any_key': 'any_value'});
 
       expect(future, throwsA(HttpError.serverError));
     });
   });
 
   group('post', () {
-    PostExpectation mockRequest() => when(client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
+    PostExpectation mockRequest() => when(
+        client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
 
-    void mockResponse(int statusCode, {String body = '{"any_key":"any_value"}'}) {
+    void mockResponse(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
       mockRequest().thenAnswer((_) async => Response(body, statusCode));
     }
 
@@ -40,19 +42,22 @@ void main() {
     }
 
     setUp(() {
-        mockResponse(200);
+      mockResponse(200);
     });
     test('Should call post with correct values', () async {
-      await sut.request(url: url, method: 'post', body: { 'any_key': 'any_value'});
+      await sut.request(
+          url: url,
+          method: 'post',
+          body: {'any_key': 'any_value'},
+          headers: {'any_header': 'any_value'});
 
-      verify(client.post(
-        url,
-        headers: {
-          'content-type': 'application/json',
-          'accept': 'application/json'
+      verify(client.post(url,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+            'any_header': 'any_value'
           },
-          body: '{"any_key":"any_value"}'
-        ));
+          body: '{"any_key":"any_value"}'));
     });
 
     test('Should call post without body', () async {
@@ -67,7 +72,7 @@ void main() {
     test('Should return data if post returns 200', () async {
       final response = await sut.request(url: url, method: 'post');
 
-      expect(response, { 'any_key': 'any_value'});
+      expect(response, {'any_key': 'any_value'});
     });
 
     test('Should return null if post returns 200 with no data', () async {
@@ -103,7 +108,6 @@ void main() {
 
       expect(future, throwsA(HttpError.badRequest));
     });
-
 
     test('Should return UnauthorizedError if post returns 401', () async {
       mockResponse(401);
@@ -142,9 +146,11 @@ void main() {
   });
 
   group('get', () {
-    PostExpectation mockRequest() => when(client.get(any, headers: anyNamed('headers')));
+    PostExpectation mockRequest() =>
+        when(client.get(any, headers: anyNamed('headers')));
 
-    void mockResponse(int statusCode, {String body = '{"any_key":"any_value"}'}) {
+    void mockResponse(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
       mockRequest().thenAnswer((_) async => Response(body, statusCode));
     }
 
@@ -152,26 +158,27 @@ void main() {
       mockRequest().thenThrow(Exception());
     }
 
-
     setUp(() {
-        mockResponse(200);
+      mockResponse(200);
     });
     test('Should call get with correct values', () async {
-      await sut.request(url: url, method: 'get');
+      await sut.request(
+          url: url, method: 'get', headers: {'any_headers': 'any_value'});
 
       verify(client.get(
         url,
         headers: {
           'content-type': 'application/json',
-          'accept': 'application/json'
-          },
-        ));
+          'accept': 'application/json',
+          'any_headers': 'any_value'
+        },
+      ));
     });
 
     test('Should return data if get returns 200', () async {
       final response = await sut.request(url: url, method: 'get');
 
-      expect(response, { 'any_key': 'any_value'});
+      expect(response, {'any_key': 'any_value'});
     });
 
     test('Should return null if get returns 200 with no data', () async {
@@ -243,5 +250,4 @@ void main() {
       expect(future, throwsA(HttpError.serverError));
     });
   });
-
 }
