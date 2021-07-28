@@ -24,6 +24,8 @@ class AuthorizeHttpClientDecorator implements HttpClient {
         ..addAll({'x-access-token': token});
       return await decoratee.request(
           url: url, method: method, body: body, headers: authorizedHeaders);
+    } on HttpError {
+      rethrow;
     } catch (e) {
       throw HttpError.forbidden;
     }
@@ -54,14 +56,21 @@ void main() {
     mockTokenCall().thenAnswer((_) async => token);
   }
 
+  PostExpectation mockHttpResponseCall() {
+    return when(httpClientSpy.request(
+        url: anyNamed('url'),
+        method: anyNamed('method'),
+        body: anyNamed('body'),
+        headers: anyNamed('headers')));
+  }
+
   void mockHttpResponse() {
     httpResponse = faker.randomGenerator.string(50);
-    when(httpClientSpy.request(
-            url: anyNamed('url'),
-            method: anyNamed('method'),
-            body: anyNamed('body'),
-            headers: anyNamed('headers')))
-        .thenAnswer((_) async => httpResponse);
+    mockHttpResponseCall().thenAnswer((_) async => httpResponse);
+  }
+
+  void mockHttpResponseError(error) {
+    mockHttpResponseCall().thenThrow(error);
   }
 
   void mockTokenError() {
@@ -114,5 +123,12 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
+  });
+
+  test('Should rethrow if decoratee throws', () async {
+    mockHttpResponseError(HttpError.badRequest);
+    final future = sut.request(url: url, method: method, body: body);
+
+    expect(future, throwsA(HttpError.badRequest));
   });
 }
