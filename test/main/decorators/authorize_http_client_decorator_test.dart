@@ -5,14 +5,14 @@ import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class AuthorizeHttpClientDecorator {
+class AuthorizeHttpClientDecorator implements HttpClient {
   final FetchSecureCacheStorage fetchSecureCacheStorage;
   final HttpClient decoratee;
 
   AuthorizeHttpClientDecorator(
       {@required this.fetchSecureCacheStorage, @required this.decoratee});
 
-  Future<void> request({
+  Future<dynamic> request({
     String url,
     String method,
     Map body,
@@ -21,7 +21,7 @@ class AuthorizeHttpClientDecorator {
     final token = await fetchSecureCacheStorage.fetchSecure('token');
     final authorizedHeaders = headers ?? {}
       ..addAll({'x-access-token': token});
-    decoratee.request(
+    return await decoratee.request(
         url: url, method: method, body: body, headers: authorizedHeaders);
   }
 }
@@ -39,11 +39,22 @@ void main() {
   Map body;
   HttpClientSpy httpClientSpy;
   String token;
+  String httpResponse;
 
   void mockToken() {
     token = faker.guid.guid();
     when(fetchSecureCacheStorageSpy.fetchSecure(any))
         .thenAnswer((_) async => token);
+  }
+
+  void mockHttpResponse() {
+    httpResponse = faker.randomGenerator.string(50);
+    when(httpClientSpy.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body'),
+            headers: anyNamed('headers')))
+        .thenAnswer((_) async => httpResponse);
   }
 
   setUp(() {
@@ -56,22 +67,13 @@ void main() {
     method = faker.randomGenerator.string(10);
     body = {'any_key': 'any_value'};
     mockToken();
+    mockHttpResponse();
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
     await sut.request(url: url, method: method, body: body);
 
     verify(fetchSecureCacheStorageSpy.fetchSecure('token')).called(1);
-  });
-
-  test('Should call decoratee with access token on header', () async {
-    await sut.request(url: url, method: method, body: body);
-
-    verify(httpClientSpy.request(
-        url: url,
-        method: method,
-        body: body,
-        headers: {'x-access-token': token})).called(1);
   });
 
   test('Should call decoratee with access token on header', () async {
@@ -82,9 +84,16 @@ void main() {
         headers: {'any_header': 'any_value'});
 
     verify(httpClientSpy.request(
-        url: url,
-        method: method,
-        body: body,
-        headers: {'x-access-token': token})).called(1);
+            url: url,
+            method: method,
+            body: body,
+            headers: {'x-access-token': token, 'any_header': 'any_value'}))
+        .called(1);
+  });
+
+  test('Should return same result as decoratee', () async {
+    final response = await sut.request(url: url, method: method, body: body);
+
+    expect(response, httpResponse);
   });
 }
