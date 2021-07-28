@@ -16,9 +16,11 @@ class AuthorizeHttpClientDecorator {
     String url,
     String method,
     Map body,
+    Map headers,
   }) async {
     final token = await fetchSecureCacheStorage.fetchSecure('token');
-    final authorizedHeaders = {'x-access-token': token};
+    final authorizedHeaders = headers ?? {}
+      ..addAll({'x-access-token': token});
     decoratee.request(
         url: url, method: method, body: body, headers: authorizedHeaders);
   }
@@ -64,6 +66,20 @@ void main() {
 
   test('Should call decoratee with access token on header', () async {
     await sut.request(url: url, method: method, body: body);
+
+    verify(httpClientSpy.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: {'x-access-token': token})).called(1);
+  });
+
+  test('Should call decoratee with access token on header', () async {
+    await sut.request(
+        url: url,
+        method: method,
+        body: body,
+        headers: {'any_header': 'any_value'});
 
     verify(httpClientSpy.request(
         url: url,
