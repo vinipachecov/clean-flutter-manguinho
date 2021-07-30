@@ -10,19 +10,22 @@ class LocalLoadSurveys {
   }
 }
 
-class FetchSecureCacheStorageSpy extends Mock implements FetchCacheStorage {}
+class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
 
 abstract class FetchCacheStorage {
   Future<void> fetch(String key);
 }
 
 void main() {
+  FetchCacheStorageSpy fetchSecureCacheStorage;
+  LocalLoadSurveys sut;
+  setUp(() {
+    fetchSecureCacheStorage = FetchCacheStorageSpy();
+    sut = LocalLoadSurveys(fetchCacheStorage: fetchSecureCacheStorage);
+  });
   test('Should call FetchCacheStorage with correct key', () async {
-    final fetchSecureCacheStorageSpy = FetchSecureCacheStorageSpy();
-    final sut = LocalLoadSurveys(fetchCacheStorage: fetchSecureCacheStorageSpy);
-
     await sut.load();
 
-    verify(fetchSecureCacheStorageSpy.fetch('surveys')).called(1);
+    verify(fetchSecureCacheStorage.fetch('surveys')).called(1);
   });
 }
