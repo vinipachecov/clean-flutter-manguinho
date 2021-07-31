@@ -20,7 +20,7 @@ class LocalSurveyModel {
     if (!json.keys
         .toSet()
         .containsAll(['id', 'question', 'date', 'didAnswer'])) {
-      throw HttpError.invalidData;
+      throw Exception();
     }
     return LocalSurveyModel(
         id: json['id'],
