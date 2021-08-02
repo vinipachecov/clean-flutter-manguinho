@@ -8,6 +8,8 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 
+import '../../../ui/pages/surveys_page_test.dart';
+
 class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {
@@ -170,6 +172,52 @@ void main() {
       await sut.validate();
 
       verify(cacheStorageSpy.delete('surveys')).called(1);
+    });
+  });
+
+  group('save', () {
+    CacheStorageSpy cacheStorageSpy;
+    LocalLoadSurveys sut;
+    List<SurveyEntity> surveys;
+
+    List<SurveyEntity> mockSurveys() => [
+          SurveyEntity(
+              id: faker.guid.guid(),
+              question: faker.randomGenerator.string(10),
+              dateTime: DateTime.utc(2020, 2, 2),
+              didAnswer: true),
+          SurveyEntity(
+              id: faker.guid.guid(),
+              question: faker.randomGenerator.string(10),
+              dateTime: DateTime.utc(2019, 2, 2),
+              didAnswer: false)
+        ];
+
+    setUp(() {
+      cacheStorageSpy = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
+      surveys = mockSurveys();
+    });
+    test('Should call cacheStorage with correct values', () async {
+      // pass a list of surveys json
+      final list = [
+        {
+          'id': surveys[0].id,
+          'question': surveys[0].question,
+          'date': '2020-02-02T00:00:00.000Z',
+          'didAnswer': 'true'
+        },
+        {
+          'id': surveys[1].id,
+          'question': surveys[1].question,
+          'date': '2019-02-02T00:00:00.000Z',
+          'didAnswer': 'false'
+        }
+      ];
+
+      await sut.save(surveys);
+
+      verify(cacheStorageSpy.save(key: 'surveys', value: list)).called(1);
     });
   });
 }
