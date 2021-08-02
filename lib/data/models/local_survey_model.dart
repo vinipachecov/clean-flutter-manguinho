@@ -1,7 +1,6 @@
 import 'package:meta/meta.dart';
 
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
-import 'package:clean_flutter_manguinho/data/http/http_error.dart';
 
 class LocalSurveyModel {
   final String id;

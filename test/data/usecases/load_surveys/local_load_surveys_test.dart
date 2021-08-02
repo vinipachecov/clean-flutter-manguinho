@@ -8,11 +8,11 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 
-class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
+class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {
   group('load', () {
-    FetchCacheStorageSpy fetchSecureCacheStorage;
+    CacheStorageSpy cacheStorageSpy;
     LocalLoadSurveys sut;
     List<Map> data;
 
@@ -31,7 +31,7 @@ void main() {
           }
         ];
 
-    PostExpectation mockFetchCall() => when(fetchSecureCacheStorage.fetch(any));
+    PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(any));
 
     void mockFetch(List<Map> list) {
       data = list;
@@ -42,18 +42,18 @@ void main() {
         mockFetchCall().thenThrow((_) async => Exception());
 
     setUp(() {
-      fetchSecureCacheStorage = FetchCacheStorageSpy();
-      sut = LocalLoadSurveys(fetchCacheStorage: fetchSecureCacheStorage);
+      cacheStorageSpy = CacheStorageSpy();
+      sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
       mockFetch(mockValidData());
     });
     test('Should call FetchCacheStorage with correct key', () async {
       await sut.load();
 
-      verify(fetchSecureCacheStorage.fetch('surveys')).called(1);
+      verify(cacheStorageSpy.fetch('surveys')).called(1);
     });
 
     test('Should return a list of surveys on success', () async {
-      when(fetchSecureCacheStorage.fetch(any)).thenAnswer((_) async => data);
+      when(cacheStorageSpy.fetch(any)).thenAnswer((_) async => data);
       final surveys = await sut.load();
 
       expect(surveys, [
