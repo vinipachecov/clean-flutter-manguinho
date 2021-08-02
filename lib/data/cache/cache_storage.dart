@@ -1,4 +1,4 @@
 abstract class CacheStorage {
   Future<dynamic> fetch(String key);
-  Future<dynamic> validate();
+  Future<void> delete(String key);
 }
