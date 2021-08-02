@@ -166,12 +166,7 @@ void main() {
     });
 
     test('Should delete cache if it is incomplete', () async {
-      mockFetch([
-        {
-          'date': '2020-07-20T00:00:00Z',
-          'didAnswer': 'false',
-        },
-      ]);
+      mockFetchError();
       await sut.validate();
 
       verify(cacheStorageSpy.delete('surveys')).called(1);
