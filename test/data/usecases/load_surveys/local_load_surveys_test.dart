@@ -8,8 +8,6 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 
-import '../../../ui/pages/surveys_page_test.dart';
-
 class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {

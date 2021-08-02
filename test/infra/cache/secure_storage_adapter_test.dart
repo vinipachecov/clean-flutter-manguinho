@@ -8,21 +8,21 @@ import 'package:clean_flutter_manguinho/infra/cache/cache.dart';
 class FlutterSecureStorageSpy extends Mock implements FlutterSecureStorage {}
 
 void main() {
-
   FlutterSecureStorageSpy secureStorage;
-  LocalStorageAdapter sut;
+  SecureStorageAdapter sut;
   String key;
   String value;
-    setUp(() {
-      secureStorage = FlutterSecureStorageSpy();
-      sut = LocalStorageAdapter(secureStorage: secureStorage);
-      key = faker.lorem.word();
-      value = faker.guid.guid();
-    });
+  setUp(() {
+    secureStorage = FlutterSecureStorageSpy();
+    sut = SecureStorageAdapter(secureStorage: secureStorage);
+    key = faker.lorem.word();
+    value = faker.guid.guid();
+  });
 
   group('saveSecure', () {
     void mocksaveSecureError() {
-      when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value'))).thenThrow(Exception());
+      when(secureStorage.write(key: anyNamed('key'), value: anyNamed('value')))
+          .thenThrow(Exception());
     }
 
     test('Should cal lsave secure with correct values', () async {
@@ -39,16 +39,16 @@ void main() {
     });
   });
 
-  group('fetchSecure',() {
-    PostExpectation mockFetchSecureCall() => when(secureStorage.read(key: anyNamed('key')));
+  group('fetchSecure', () {
+    PostExpectation mockFetchSecureCall() =>
+        when(secureStorage.read(key: anyNamed('key')));
     void mockFetchSecure() {
       mockFetchSecureCall().thenAnswer((_) async => value);
     }
 
-      void mocksaveSecureError() {
-        mockFetchSecureCall().thenThrow(Exception());
-      }
-
+    void mocksaveSecureError() {
+      mockFetchSecureCall().thenThrow(Exception());
+    }
 
     setUp(() {
       mockFetchSecure();
@@ -73,4 +73,3 @@ void main() {
     });
   });
 }
-

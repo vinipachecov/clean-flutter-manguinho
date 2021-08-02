@@ -5,4 +5,4 @@ import 'package:clean_flutter_manguinho/main/factories/http/http.dart';
 
 HttpClient makeAuthorizeHttpClientDecorator() => AuthorizeHttpClientDecorator(
     decoratee: makeHttpAdapter(),
-    fetchSecureCacheStorage: makeLocalStorageAdapter());
+    fetchSecureCacheStorage: makeSecureStorageAdapter());
