@@ -16,10 +16,13 @@ class RemoteLoadSurveysWithLocalFallback {
 class RemoteLoadSurveysSpy extends Mock implements RemoteLoadSurveys {}
 
 void main() {
+  RemoteLoadSurveysSpy remote;
+  RemoteLoadSurveysWithLocalFallback sut;
+  setUp(() {
+    remote = RemoteLoadSurveysSpy();
+    sut = RemoteLoadSurveysWithLocalFallback(remote: remote);
+  });
   test('Should call remote load', () async {
-    final remote = RemoteLoadSurveysSpy();
-    final sut = RemoteLoadSurveysWithLocalFallback(remote: remote);
-
     await sut.load();
 
     verify(remote.load()).called(1);
