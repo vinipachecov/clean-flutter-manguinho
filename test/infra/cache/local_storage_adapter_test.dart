@@ -9,9 +9,9 @@ class LocalStorageAdapter {
 
   LocalStorageAdapter({this.localStorage});
 
-  Future<void> save({@required String key, @required dynamic value}) {
-    localStorage.deleteItem(key);
-    localStorage.setItem(key, value);
+  Future<void> save({@required String key, @required dynamic value}) async {
+    await localStorage.deleteItem(key);
+    await localStorage.setItem(key, value);
   }
 }
 
@@ -20,8 +20,12 @@ class LocalStorageSpy extends Mock implements LocalStorage {}
 void main() {
   String key;
   String value;
-  LocalStorage localStorage;
+  LocalStorageSpy localStorage;
   LocalStorageAdapter sut;
+
+  void mockDeleteItemError() =>
+      when(localStorage.deleteItem(any)).thenThrow(Exception());
+
   setUp(() {
     key = faker.randomGenerator.string(5);
     value = faker.randomGenerator.string(50);
@@ -33,5 +37,12 @@ void main() {
 
     verify(localStorage.deleteItem(key)).called(1);
     verify(localStorage.setItem(key, value)).called(1);
+  });
+
+  test('Should throw if deleteItem throws', () async {
+    mockDeleteItemError();
+    final future = sut.save(key: key, value: value);
+
+    expect(future, throwsA(TypeMatcher<Exception>()));
   });
 }
