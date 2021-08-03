@@ -1,3 +1,4 @@
+import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
@@ -38,9 +39,16 @@ void main() {
             didAnswer: faker.randomGenerator.boolean())
       ];
 
+  PostExpectation mockRemoteLoadCall() => when(remote.load());
+
   void mockRemoteLoad() {
     remoteSurveys = mockSurveys();
-    when(remote.load()).thenAnswer((_) async => remoteSurveys);
+    mockRemoteLoadCall().thenAnswer((_) async => remoteSurveys);
+  }
+
+  void mockRemoteLoadError(DomainError error) {
+    remoteSurveys = mockSurveys();
+    mockRemoteLoadCall().thenThrow(error);
   }
 
   setUp(() {
@@ -65,5 +73,13 @@ void main() {
     final surveys = await sut.load();
 
     expect(surveys, remoteSurveys);
+  });
+
+  test('Should rethrow if remote load throws AccessDeniedError', () async {
+    mockRemoteLoadError(DomainError.accessDenied);
+
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }
