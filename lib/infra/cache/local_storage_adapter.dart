@@ -1,7 +1,8 @@
+import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:meta/meta.dart';
 import 'package:localstorage/localstorage.dart';
 
-class LocalStorageAdapter {
+class LocalStorageAdapter implements CacheStorage {
   LocalStorage localStorage;
 
   LocalStorageAdapter({this.localStorage});
