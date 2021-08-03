@@ -2,18 +2,8 @@ import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:meta/meta.dart';
 
-class LocalStorageAdapter {
-  LocalStorage localStorage;
-
-  LocalStorageAdapter({this.localStorage});
-
-  Future<void> save({@required String key, @required dynamic value}) async {
-    await localStorage.deleteItem(key);
-    await localStorage.setItem(key, value);
-  }
-}
+import 'package:clean_flutter_manguinho/infra/cache/cache.dart';
 
 class LocalStorageSpy extends Mock implements LocalStorage {}
 
