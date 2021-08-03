@@ -1,19 +1,22 @@
-import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
-import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:faker/faker.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class RemoteLoadSurveysWithLocalFallback {
+import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
+import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
+import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
+
+class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
   RemoteLoadSurveys remote;
   LocalLoadSurveys local;
   RemoteLoadSurveysWithLocalFallback(
       {@required this.remote, @required this.local});
 
-  Future<void> load() async {
+  Future<List<SurveyEntity>> load() async {
     final surveys = await remote.load();
     await local.save(surveys);
+    return surveys;
   }
 }
 
@@ -25,7 +28,7 @@ void main() {
   RemoteLoadSurveysSpy remote;
   LocalLoadSurveysSpy local;
   RemoteLoadSurveysWithLocalFallback sut;
-  List<SurveyEntity> surveys;
+  List<SurveyEntity> remoteSurveys;
 
   List<SurveyEntity> mockSurveys() => [
         SurveyEntity(
@@ -35,7 +38,10 @@ void main() {
             didAnswer: faker.randomGenerator.boolean())
       ];
 
-  void mockRemoteLoad() => when(remote.load()).thenAnswer((_) async => surveys);
+  void mockRemoteLoad() {
+    remoteSurveys = mockSurveys();
+    when(remote.load()).thenAnswer((_) async => remoteSurveys);
+  }
 
   setUp(() {
     remote = RemoteLoadSurveysSpy();
@@ -52,6 +58,12 @@ void main() {
   test('Should call local save with remote data', () async {
     await sut.load();
 
-    verify(local.save(surveys)).called(1);
+    verify(local.save(remoteSurveys)).called(1);
+  });
+
+  test('Should return remote data', () async {
+    final surveys = await sut.load();
+
+    expect(surveys, remoteSurveys);
   });
 }
