@@ -4,5 +4,6 @@ import '../../../../presentation/presenters/presenters.dart';
 import '../../../../ui/pages/pages.dart';
 
 SurveysPresenter makeGetxSurveyPresenter() {
-  return GetxSurveysPresenter(loadSurveys: makeRemoteLoadSurveys());
+  return GetxSurveysPresenter(
+      loadSurveys: makeRemoteLoadSurveysWithLocalFallback());
 }
