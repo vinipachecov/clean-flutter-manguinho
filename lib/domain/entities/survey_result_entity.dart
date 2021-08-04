@@ -5,7 +5,7 @@ import './entities.dart';
 class SurveyResultEntity extends Equatable {
   final String surveyId;
   final String question;
-  final List<SurveyAnswer> answers;
+  final List<SurveyAnswerEntity> answers;
 
   List get props => ['surveyId', 'question', 'answers'];
   SurveyResultEntity(
