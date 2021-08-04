@@ -17,6 +17,9 @@ dependencies:
   localstorage:
   carousel_slider:
   intl: 
+  provider:
+  get:
+  equatable:
 
 dev_dependencies:
   flutter_test:
@@ -24,10 +27,9 @@ dev_dependencies:
   flutter_launcher_icons:
   test:
   mockito:
-  faker:
-  provider:
-  get:
-  equatable:
+  faker:  
+  image_test_utils:
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
