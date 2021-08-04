@@ -10,7 +10,6 @@ void main() {
 }
 
 class App extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
@@ -18,12 +17,14 @@ class App extends StatelessWidget {
       title: 'ViniciusDev',
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
-      initialRoute: '/',
+      initialRoute: '/survey_result/3',
       getPages: [
         GetPage(name: '/', page: makeSplashPage, transition: Transition.fade),
-        GetPage(name: '/login', page: makeLoginPage, transition: Transition.fadeIn),
+        GetPage(
+            name: '/login', page: makeLoginPage, transition: Transition.fadeIn),
         GetPage(name: '/signup', page: makeSignUpPage),
         GetPage(name: '/surveys', page: makeSurveysPage),
+        GetPage(name: '/survey_result/:survey_id', page: makeSurveyResultPage),
       ],
     );
   }
