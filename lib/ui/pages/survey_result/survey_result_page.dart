@@ -24,7 +24,7 @@ class SurveyResultPage extends StatelessWidget {
             });
 
             this.presenter.loadData();
-            return StreamBuilder<dynamic>(
+            return StreamBuilder<SurveyResultViewModel>(
                 stream: presenter.surveyResultStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
@@ -32,7 +32,7 @@ class SurveyResultPage extends StatelessWidget {
                         error: snapshot.error, reload: presenter.loadData);
                   }
                   if (snapshot.hasData) {
-                    return SurveyResult();
+                    return SurveyResult(snapshot.data);
                   }
                   return SizedBox(height: 0);
                 });
