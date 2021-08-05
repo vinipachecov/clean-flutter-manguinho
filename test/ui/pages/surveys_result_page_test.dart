@@ -28,6 +28,7 @@ void main() {
 
   void closeStreams() {
     isLoadingController.close();
+    surveyResultController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -89,5 +90,16 @@ void main() {
         findsOneWidget);
     expect(find.text("Recarregar"), findsOneWidget);
     expect(find.text("Question 1"), findsNothing);
+  });
+
+  testWidgets('Should call LoadSurveys on reload button click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.addError(UIError.unexpected.description);
+    await tester.pump();
+    await tester.tap(find.text('Recarregar'));
+
+    verify(presenter.loadData()).called(2);
   });
 }
