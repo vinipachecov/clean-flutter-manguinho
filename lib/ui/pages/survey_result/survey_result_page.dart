@@ -1,3 +1,4 @@
+import 'package:clean_flutter_manguinho/ui/components/spinner_dialog.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
@@ -12,6 +13,14 @@ class SurveyResultPage extends StatelessWidget {
         appBar: AppBar(title: Text(R.strings.surveys)),
         body: Builder(
           builder: (ctx) {
+            presenter.isLoadingStream.listen((isLoading) {
+              if (isLoading == true) {
+                showLoading(context);
+              } else {
+                hideLoading(context);
+              }
+            });
+
             this.presenter.loadData();
             return ListView.builder(
                 itemCount: 4,
