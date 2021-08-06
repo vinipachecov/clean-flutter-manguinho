@@ -1,10 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/components/components.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
-import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-
-import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import './components/components.dart';
 
 class SurveysPage extends StatelessWidget {
