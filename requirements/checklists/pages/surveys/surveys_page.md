@@ -9,5 +9,5 @@
 6. ✅ Mostrar a data e pergunta da enquete baseado no modelo
 7. ✅ Mostrar em vermelho as enquetes não respondidas e em verde as respondidas pelo usuário
 8. ✅ Chamar o método de Listar Enquetes ao clicar no botão de recarregar
-9. Ir para a tela de resultado da enquete ao clicar em alguma enquete
-10. Ir para tela de Login e limpar a navegação ao receber evento de sessionExpired como true
+9. ✅ Ir para a tela de resultado da enquete ao clicar em alguma enquete
+10. ✅ Ir para tela de Login e limpar a navegação ao receber evento de sessionExpired como true

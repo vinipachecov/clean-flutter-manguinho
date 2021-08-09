@@ -3,7 +3,10 @@ import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/components/components.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
+import 'package:get/instance_manager.dart';
+import 'package:provider/provider.dart';
 import './components/components.dart';
+import 'package:get/get.dart';
 
 class SurveysPage extends StatelessWidget {
   final SurveysPresenter presenter;
@@ -23,6 +26,13 @@ class SurveysPage extends StatelessWidget {
                 hideLoading(context);
               }
             });
+
+            presenter.navigateToStream.listen((page) {
+              if (page?.isNotEmpty == true) {
+                Get.toNamed(page);
+              }
+            });
+
             presenter.loadData();
 
             return StreamBuilder<List<SurveyViewModel>>(
@@ -33,7 +43,9 @@ class SurveysPage extends StatelessWidget {
                         error: snapshot.error, reload: presenter.loadData);
                   }
                   if (snapshot.hasData) {
-                    return SurveyItems(snapshot.data);
+                    return Provider(
+                        create: (_) => presenter,
+                        child: SurveyItems(snapshot.data));
                   }
                   return SizedBox(height: 0);
                 });

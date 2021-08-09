@@ -14,10 +14,12 @@ void main() {
   SurveysPresenterSpy presenter;
   StreamController<bool> isLoadingController;
   StreamController<List<SurveyViewModel>> surveysController;
+  StreamController<String> navigateToController;
 
   void initStreams() {
     isLoadingController = StreamController<bool>();
     surveysController = StreamController<List<SurveyViewModel>>();
+    navigateToController = StreamController<String>();
   }
 
   void mockStreams() {
@@ -25,11 +27,14 @@ void main() {
         .thenAnswer((_) => isLoadingController.stream);
     when(presenter.surveysStream)
         .thenAnswer((realInvocation) => surveysController.stream);
+    when(presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
   }
 
   void closeStreams() {
     isLoadingController.close();
     surveysController.close();
+    navigateToController.close();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -37,7 +42,8 @@ void main() {
     initStreams();
     mockStreams();
     final surveysPage = GetMaterialApp(initialRoute: '/surveys', getPages: [
-      GetPage(name: '/surveys', page: () => SurveysPage(presenter))
+      GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
+      GetPage(name: '/any_route', page: () => Scaffold(body: Text('fake page')))
     ]);
 
     await tester.pumpWidget(surveysPage);
@@ -122,5 +128,28 @@ void main() {
     await tester.tap(find.text('Recarregar'));
 
     verify(presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should call goToSurveyResult on survey click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveysController.add(makeSurveys());
+    await tester.pump();
+
+    await tester.tap(find.text("Question 1"));
+    await tester.pump();
+
+    verify(presenter.goToSurveyResult('1')).called(1);
+  });
+
+  testWidgets('Should change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('/any_route');
+    /** use pumpAndSettle to wait for animations and stuff to happen */
+    await tester.pumpAndSettle();
+    expect(Get.currentRoute, '/any_route');
+    expect(find.text('fake page'), findsOneWidget);
   });
 }
