@@ -25,9 +25,10 @@ class AuthorizeHttpClientDecorator implements HttpClient {
       final response = await decoratee.request(
           url: url, method: method, body: body, headers: authorizedHeaders);
       return response;
-    } on HttpError {
-      rethrow;
-    } catch (e) {
+    } catch (error) {
+      if (error is HttpError && error != HttpError.forbidden) {
+        rethrow;
+      }
       await deleteSecureCacheStorage.deleteSecure('token');
       throw HttpError.forbidden;
     }

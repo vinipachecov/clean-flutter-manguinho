@@ -112,4 +112,18 @@ void main() {
 
     expect(future, throwsA(HttpError.badRequest));
   });
+
+  test('Should delete cache if request throws ForbiddenError', () async {
+    mockHttpResponseError(HttpError.forbidden);
+    final future = sut.request(url: url, method: method, body: body);
+
+    /**
+     * untilCalled is a helper method from Mockito to ensure that our test
+     * gives enough time for an async method to run. 
+     */
+    await untilCalled(deleteSecureCacheStorageSpy.deleteSecure('token'));
+
+    expect(future, throwsA(HttpError.forbidden));
+    verify(deleteSecureCacheStorageSpy.deleteSecure('token')).called(1);
+  });
 }
