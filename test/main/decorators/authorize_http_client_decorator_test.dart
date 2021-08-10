@@ -26,7 +26,7 @@ void main() {
   String httpResponse;
 
   PostExpectation mockTokenCall() {
-    return when(fetchSecureCacheStorageSpy.fetchSecure(any));
+    return when(fetchSecureCacheStorageSpy.fetch(any));
   }
 
   void mockToken() {
@@ -73,7 +73,7 @@ void main() {
   test('Should call FetchSecureCacheStorage with correct key', () async {
     await sut.request(url: url, method: method, body: body);
 
-    verify(fetchSecureCacheStorageSpy.fetchSecure('token')).called(1);
+    verify(fetchSecureCacheStorageSpy.fetch('token')).called(1);
   });
 
   test('Should call decoratee with access token on header', () async {
@@ -103,7 +103,7 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(deleteSecureCacheStorageSpy.deleteSecure('token')).called(1);
+    verify(deleteSecureCacheStorageSpy.delete('token')).called(1);
   });
 
   test('Should rethrow if decoratee throws', () async {
@@ -121,9 +121,9 @@ void main() {
      * untilCalled is a helper method from Mockito to ensure that our test
      * gives enough time for an async method to run. 
      */
-    await untilCalled(deleteSecureCacheStorageSpy.deleteSecure('token'));
+    await untilCalled(deleteSecureCacheStorageSpy.delete('token'));
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(deleteSecureCacheStorageSpy.deleteSecure('token')).called(1);
+    verify(deleteSecureCacheStorageSpy.delete('token')).called(1);
   });
 }

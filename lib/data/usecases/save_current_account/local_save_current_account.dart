@@ -6,7 +6,6 @@ import '../../../domain/usecases/usecases.dart';
 
 import '../../cache/cache.dart';
 
-
 class LocalSaveCurrentAccount implements SaveCurrentAccount {
   final SaveSecureCacheStorage saveSecureCacheStorage;
 
@@ -14,7 +13,7 @@ class LocalSaveCurrentAccount implements SaveCurrentAccount {
 
   Future<void> save(AccountEntity account) async {
     try {
-      await saveSecureCacheStorage.saveSecure(key: 'token', value: account.token);
+      await saveSecureCacheStorage.save(key: 'token', value: account.token);
     } catch (error) {
       throw DomainError.unexpected;
     }
