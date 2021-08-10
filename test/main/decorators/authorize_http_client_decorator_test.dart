@@ -9,10 +9,14 @@ import 'package:clean_flutter_manguinho/data/http/http.dart';
 class FetchSecureCacheStorageSpy extends Mock
     implements FetchSecureCacheStorage {}
 
+class DeleteSecureCacheStorageSpy extends Mock
+    implements DeleteSecureCacheStorage {}
+
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
   FetchSecureCacheStorageSpy fetchSecureCacheStorageSpy;
+  DeleteSecureCacheStorageSpy deleteSecureCacheStorageSpy;
   AuthorizeHttpClientDecorator sut;
   String url;
   String method;
@@ -53,9 +57,11 @@ void main() {
 
   setUp(() {
     fetchSecureCacheStorageSpy = FetchSecureCacheStorageSpy();
+    deleteSecureCacheStorageSpy = DeleteSecureCacheStorageSpy();
     httpClientSpy = HttpClientSpy();
     sut = AuthorizeHttpClientDecorator(
         fetchSecureCacheStorage: fetchSecureCacheStorageSpy,
+        deleteSecureCacheStorage: deleteSecureCacheStorageSpy,
         decoratee: httpClientSpy);
     url = faker.internet.httpUrl();
     method = faker.randomGenerator.string(10);
@@ -97,6 +103,7 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
+    verify(deleteSecureCacheStorageSpy.deleteSecure('token')).called(1);
   });
 
   test('Should rethrow if decoratee throws', () async {
