@@ -3,6 +3,7 @@ import 'package:clean_flutter_manguinho/ui/components/spinner_dialog.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
+import 'package:get/get.dart';
 import './components/components.dart';
 
 class SurveyResultPage extends StatelessWidget {
@@ -20,6 +21,12 @@ class SurveyResultPage extends StatelessWidget {
                 showLoading(context);
               } else {
                 hideLoading(context);
+              }
+            });
+
+            presenter.isSessionExpiredStream.listen((isExpired) {
+              if (isExpired == true) {
+                Get.offAllNamed('/login');
               }
             });
 

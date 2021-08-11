@@ -8,12 +8,13 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 class GetxLoadSurveyResultPresenter implements SurveyResultPresenter {
   final LoadSurveyResult loadSurveyResult;
   final String surveyId;
-
   final _isLoading = true.obs;
   final _surveyResult = Rx<SurveyResultViewModel>();
+  final _isSessionExpired = RxBool();
 
   Stream<bool> get isLoadingStream => _isLoading.stream;
   Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult.stream;
+  Stream<bool> get isSessionExpiredStream => _isSessionExpired.stream;
 
   GetxLoadSurveyResultPresenter(
       {@required this.loadSurveyResult, this.surveyId});
@@ -33,8 +34,12 @@ class GetxLoadSurveyResultPresenter implements SurveyResultPresenter {
                   percent: '${answer.percent}%'))
               .toList());
       _isLoading.value = false;
-    } on DomainError {
-      _surveyResult.subject.addError(UIError.unexpected.description);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        _isSessionExpired.value = true;
+      } else {
+        _surveyResult.subject.addError(UIError.unexpected.description);
+      }
     } finally {
       _isLoading.value = false;
     }
