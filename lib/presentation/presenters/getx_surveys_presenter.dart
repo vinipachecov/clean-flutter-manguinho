@@ -1,3 +1,4 @@
+import 'package:clean_flutter_manguinho/presentation/mixins/mixins.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:intl/intl.dart';
@@ -7,24 +8,20 @@ import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
-class GetxSurveysPresenter implements SurveysPresenter {
+class GetxSurveysPresenter
+    with LoadingManager, SessionManager, NavigationManager
+    implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
-  final _isLoading = true.obs;
   final _surveys = Rx<List<SurveyViewModel>>();
-  final _navigateTo = Rx<String>();
-  final _isSessionExpired = RxBool();
 
-  Stream<bool> get isLoadingStream => _isLoading.stream;
-  Stream<bool> get isSessionExpiredStream => _isSessionExpired.stream;
   Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
-  Stream<String> get navigateToStream => _navigateTo.stream;
 
   GetxSurveysPresenter({@required this.loadSurveys});
 
   Future<void> loadData() async {
     try {
-      _isLoading.value = true;
+      isLoading = true;
       final surveys = await loadSurveys.load();
       // Map de SurveyEntity para SurveyViewModel
       _surveys.value = surveys
@@ -34,19 +31,19 @@ class GetxSurveysPresenter implements SurveysPresenter {
               date: DateFormat('dd MMM yyyy').format(survey.dateTime),
               didAnswer: survey.didAnswer))
           .toList();
-      _isLoading.value = false;
+      isLoading = false;
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
-        _isSessionExpired.value = true;
+        isSessionExpired = true;
       } else {
         _surveys.subject.addError(UIError.unexpected.description);
       }
     } finally {
-      _isLoading.value = false;
+      isLoading = false;
     }
   }
 
   void goToSurveyResult(String surveyId) {
-    _navigateTo.value = '/survey_result/$surveyId';
+    navigateTo = '/survey_result/$surveyId';
   }
 }
