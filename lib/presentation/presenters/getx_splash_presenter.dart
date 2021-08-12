@@ -2,8 +2,11 @@ import 'package:clean_flutter_manguinho/presentation/mixins/mixins.dart';
 import 'package:meta/meta.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/ui/pages/splash/splash.dart';
+import 'package:get/get.dart';
 
-class GetxSplashPresenter with NavigationManager implements SplashPresenter {
+class GetxSplashPresenter extends GetxController
+    with NavigationManager
+    implements SplashPresenter {
   final LoadCurrentAccount loadCurrentAccount;
 
   GetxSplashPresenter({@required this.loadCurrentAccount});

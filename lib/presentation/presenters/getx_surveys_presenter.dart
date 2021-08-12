@@ -8,7 +8,7 @@ import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
-class GetxSurveysPresenter
+class GetxSurveysPresenter extends GetxController
     with LoadingManager, SessionManager, NavigationManager
     implements SurveysPresenter {
   final LoadSurveys loadSurveys;

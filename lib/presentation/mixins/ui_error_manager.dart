@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 
-mixin UIErrorManager {
+mixin UIErrorManager on GetxController {
   final _mainError = Rx<UIError>();
   Stream<UIError> get mainErrorStream => _mainError.stream;
 
