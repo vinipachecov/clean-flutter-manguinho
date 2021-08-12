@@ -3,12 +3,12 @@ import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/components/components.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
-import 'package:get/instance_manager.dart';
 import 'package:provider/provider.dart';
 import './components/components.dart';
-import 'package:get/get.dart';
+import '../../mixins/mixins.dart';
 
-class SurveysPage extends StatelessWidget {
+class SurveysPage extends StatelessWidget
+    with LoadingManager, NavigationManager, SessionManager {
   final SurveysPresenter presenter;
 
   SurveysPage(this.presenter);
@@ -19,25 +19,11 @@ class SurveysPage extends StatelessWidget {
         appBar: AppBar(title: Text(R.strings.surveys)),
         body: Builder(
           builder: (context) {
-            presenter.isLoadingStream.listen((isLoading) {
-              if (isLoading == true) {
-                showLoading(context);
-              } else {
-                hideLoading(context);
-              }
-            });
+            handleLoading(context, presenter.isLoadingStream);
 
-            presenter.isSessionExpiredStream.listen((isExpired) {
-              if (isExpired == true) {
-                Get.offAllNamed('/login');
-              }
-            });
+            handleSession(presenter.isSessionExpiredStream);
 
-            presenter.navigateToStream.listen((page) {
-              if (page?.isNotEmpty == true) {
-                Get.toNamed(page);
-              }
-            });
+            handleNavigation(presenter.navigateToStream);
 
             presenter.loadData();
 

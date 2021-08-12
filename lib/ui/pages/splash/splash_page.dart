@@ -1,10 +1,8 @@
-import 'package:get/get.dart';
-
 import './splash_presenter.dart';
 import 'package:flutter/material.dart';
+import '../../mixins/mixins.dart';
 
-
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatelessWidget with NavigationManager {
   final SplashPresenter presenter;
 
   SplashPage({@required this.presenter});
@@ -14,16 +12,15 @@ class SplashPage extends StatelessWidget {
     presenter.checkAccount();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Company'),),
-      body: Builder(builder: (context) {
-        presenter.navigateToStream.listen((page) {
-          if (page?.isNotEmpty == true) {
-            Get.offAllNamed(page);
-          }
-        });
+        appBar: AppBar(
+          title: Text('Company'),
+        ),
+        body: Builder(
+          builder: (context) {
+            handleNavigation(presenter.navigateToStream, clear: true);
 
-        return Center(child: CircularProgressIndicator());
-      },)
-    );
+            return Center(child: CircularProgressIndicator());
+          },
+        ));
   }
 }

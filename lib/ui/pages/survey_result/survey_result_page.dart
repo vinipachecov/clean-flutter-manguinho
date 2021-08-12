@@ -1,12 +1,12 @@
 import 'package:clean_flutter_manguinho/ui/components/components.dart';
-import 'package:clean_flutter_manguinho/ui/components/spinner_dialog.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
-import 'package:get/get.dart';
 import './components/components.dart';
+import '../../mixins/mixins.dart';
 
-class SurveyResultPage extends StatelessWidget {
+class SurveyResultPage extends StatelessWidget
+    with LoadingManager, SessionManager {
   final SurveyResultPresenter presenter;
   SurveyResultPage(this.presenter);
 
@@ -16,19 +16,9 @@ class SurveyResultPage extends StatelessWidget {
         appBar: AppBar(title: Text(R.strings.surveys)),
         body: Builder(
           builder: (ctx) {
-            presenter.isLoadingStream.listen((isLoading) {
-              if (isLoading == true) {
-                showLoading(context);
-              } else {
-                hideLoading(context);
-              }
-            });
+            handleLoading(context, presenter.isLoadingStream);
 
-            presenter.isSessionExpiredStream.listen((isExpired) {
-              if (isExpired == true) {
-                Get.offAllNamed('/login');
-              }
-            });
+            handleSession(presenter.isSessionExpiredStream);
 
             this.presenter.loadData();
             return StreamBuilder<SurveyResultViewModel>(
