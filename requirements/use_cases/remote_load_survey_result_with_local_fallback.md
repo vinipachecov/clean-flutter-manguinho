@@ -6,11 +6,11 @@
 3. ✅ Sistema retorna esses dados
 
 > ## Exceção - Acesso negado
-1. Sistema repassa a exceção de acesso negado
+1. ✅ Sistema repassa a exceção de acesso negado
 
 > ## Exceção - Qualquer outro erro
-1. Sistema executa o método de validar dados do cache
-2. Sistema executa o método de carregar dados do cache
+1. ✅ Sistema executa o método de validar dados do cache
+2. ✅ Sistema executa o método de carregar dados do cache
 3. Sistema retorna esses dados
 
 > ## Exceção - Erro ao obter dados do Cache
