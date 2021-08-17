@@ -121,4 +121,76 @@ void main() {
       expect(future, throwsA(DomainError.unexpected));
     });
   });
+  group('validate', () {
+    CacheStorageSpy cacheStorageSpy;
+    LocalLoadSurveyResult sut;
+    String surveyId;
+    Map data;
+
+    Map mockValidData() => {
+          'surveyId': faker.guid.guid(),
+          'question': faker.lorem.sentence(),
+          'answers': [
+            {
+              'image': faker.internet.httpUrl(),
+              'answer': faker.lorem.sentence(),
+              'isCurrentAnswer': 'true',
+              'percent': '40'
+            },
+            {
+              'answer': faker.lorem.sentence(),
+              'isCurrentAnswer': 'false',
+              'percent': '60'
+            }
+          ],
+        };
+
+    PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(any));
+
+    void mockFetch(Map json) {
+      data = json;
+      mockFetchCall().thenAnswer((_) async => data);
+    }
+
+    void mockFetchError() =>
+        mockFetchCall().thenThrow((_) async => Exception());
+
+    setUp(() {
+      surveyId = faker.guid.guid();
+      cacheStorageSpy = CacheStorageSpy();
+      sut = LocalLoadSurveyResult(cacheStorage: cacheStorageSpy);
+      mockFetch(mockValidData());
+    });
+    test('Should call cacheStorage with correct key', () async {
+      await sut.validate(surveyId);
+
+      verify(cacheStorageSpy.fetch('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if it is invalid', () async {
+      mockFetch({
+        'surveyId': faker.guid.guid(),
+        'question': faker.lorem.sentence(),
+        'answers': [
+          {
+            'image': faker.internet.httpUrl(),
+            'answer': faker.lorem.sentence(),
+            'isCurrentAnswer': 'invalid bool',
+            'percent': 'invalid int'
+          },
+        ],
+      });
+
+      await sut.validate(surveyId);
+
+      verify(cacheStorageSpy.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if fetch fails', () async {
+      mockFetchError();
+      await sut.validate();
+
+      verify(cacheStorageSpy.delete('survey_result/$surveyId')).called(1);
+    });
+  });
 }
