@@ -7,6 +7,6 @@ import '../../../../main/factories/usecases/usecases.dart';
  */
 SurveyResultPresenter makeGetxSurveyResultPresenter(String surveyId) {
   return GetxLoadSurveyResultPresenter(
-      loadSurveyResult: makeRemoteLoadSurveyResult(surveyId),
+      loadSurveyResult: makeRemoteLoadSurveyResultWithLocalFallback(surveyId),
       surveyId: surveyId);
 }
