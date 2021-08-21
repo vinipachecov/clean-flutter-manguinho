@@ -18,6 +18,13 @@ void main() {
   RemoteSaveSurveyResult sut;
   String answer;
 
+  PostExpectation mockRequest() => when(httpClient.request(
+      url: anyNamed('url'),
+      method: anyNamed('method'),
+      body: anyNamed('body')));
+
+  void mockHttpError(error) => mockRequest().thenThrow(error);
+
   setUp(() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
@@ -29,5 +36,29 @@ void main() {
 
     verify(
         httpClient.request(url: url, method: 'put', body: {'answer': answer}));
+  });
+
+  test('Should throw UnexpectedError if httpClient returns 404', () async {
+    mockHttpError(HttpError.notFound);
+
+    final future = sut.save(answer);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if httpClient returns 500', () async {
+    mockHttpError(HttpError.serverError);
+
+    final future = sut.save(answer);
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw accessDenied if httpClient returns 403', () async {
+    mockHttpError(HttpError.forbidden);
+
+    final future = sut.save(answer);
+
+    expect(future, throwsA(DomainError.accessDenied));
   });
 }
