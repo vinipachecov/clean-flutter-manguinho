@@ -10,6 +10,7 @@ class GetxLoadSurveyResultPresenter extends GetxController
     with LoadingManager, SessionManager
     implements SurveyResultPresenter {
   final LoadSurveyResult loadSurveyResult;
+  final SaveSurveyResult saveSurveyResult;
   final String surveyId;
 
   final _surveyResult = Rx<SurveyResultViewModel>();
@@ -17,7 +18,9 @@ class GetxLoadSurveyResultPresenter extends GetxController
   Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult.stream;
 
   GetxLoadSurveyResultPresenter(
-      {@required this.loadSurveyResult, this.surveyId});
+      {@required this.loadSurveyResult,
+      @required this.saveSurveyResult,
+      this.surveyId});
 
   Future<void> loadData() async {
     try {
@@ -45,5 +48,7 @@ class GetxLoadSurveyResultPresenter extends GetxController
     }
   }
 
-  Future<void> save({String answer}) {}
+  Future<void> save({String answer}) async {
+    await saveSurveyResult.save(answer: answer);
+  }
 }
