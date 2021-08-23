@@ -1,3 +1,4 @@
+import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:clean_flutter_manguinho/presentation/mixins/mixins.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
@@ -23,35 +24,17 @@ class GetxLoadSurveyResultPresenter extends GetxController
       this.surveyId});
 
   Future<void> loadData() async {
-    try {
-      isLoading = true;
-      final survey = await loadSurveyResult.loadBySurvey(surveyId: surveyId);
-      // Map de SurveyEntity para SurveyViewModel
-      _surveyResult.value = SurveyResultViewModel(
-          surveyId: survey.surveyId,
-          question: survey.question,
-          answers: survey.answers
-              .map((answer) => SurveyAnswerViewModel(
-                  answer: answer.answer,
-                  isCurrentAnswer: answer.isCurrentAnswer,
-                  percent: '${answer.percent}%'))
-              .toList());
-      isLoading = false;
-    } on DomainError catch (error) {
-      if (error == DomainError.accessDenied) {
-        isSessionExpired = true;
-      } else {
-        _surveyResult.subject.addError(UIError.unexpected.description);
-      }
-    } finally {
-      isLoading = false;
-    }
+    await showResult(() => loadSurveyResult.loadBySurvey(surveyId: surveyId));
   }
 
   Future<void> save({String answer}) async {
+    await showResult(() => saveSurveyResult.save(answer: answer));
+  }
+
+  Future<void> showResult(Future<SurveyResultEntity> action()) async {
     try {
       isLoading = true;
-      final saveResult = await saveSurveyResult.save(answer: answer);
+      final saveResult = await action();
       // Map de SurveyEntity para SurveyViewModel
       _surveyResult.value = SurveyResultViewModel(
           surveyId: saveResult.surveyId,
