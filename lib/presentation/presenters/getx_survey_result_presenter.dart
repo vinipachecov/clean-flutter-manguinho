@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
+import '../helpers/helpers.dart';
 
 class GetxLoadSurveyResultPresenter extends GetxController
     with LoadingManager, SessionManager
@@ -36,15 +37,7 @@ class GetxLoadSurveyResultPresenter extends GetxController
       isLoading = true;
       final saveResult = await action();
       // Map de SurveyEntity para SurveyViewModel
-      _surveyResult.value = SurveyResultViewModel(
-          surveyId: saveResult.surveyId,
-          question: saveResult.question,
-          answers: saveResult.answers
-              .map((answer) => SurveyAnswerViewModel(
-                  answer: answer.answer,
-                  isCurrentAnswer: answer.isCurrentAnswer,
-                  percent: '${answer.percent}%'))
-              .toList());
+      _surveyResult.subject.add(saveResult.toViewModel());
       isLoading = false;
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
