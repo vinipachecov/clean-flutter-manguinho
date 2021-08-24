@@ -8,5 +8,6 @@ import '../../../../main/factories/usecases/usecases.dart';
 SurveyResultPresenter makeGetxSurveyResultPresenter(String surveyId) {
   return GetxLoadSurveyResultPresenter(
       loadSurveyResult: makeRemoteLoadSurveyResultWithLocalFallback(surveyId),
+      saveSurveyResult: makeRemoteSaveSurveyResult(surveyId),
       surveyId: surveyId);
 }
