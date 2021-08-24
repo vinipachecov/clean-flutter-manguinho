@@ -4,7 +4,7 @@ import './components.dart';
 
 class SurveyResult extends StatelessWidget {
   final SurveyResultViewModel viewModel;
-  void Function({@required String answer}) onSave;
+  final void Function({@required String answer}) onSave;
   SurveyResult({@required this.viewModel, @required this.onSave});
 
   @override
@@ -15,10 +15,12 @@ class SurveyResult extends StatelessWidget {
           if (index == 0) {
             return SurveyHeader(viewModel.question);
           }
+          final answer = viewModel.answers[index - 1];
 
           return GestureDetector(
-              onTap: () => onSave(answer: viewModel.answers[index - 1].answer),
-              child: SurveyAnswer(viewModel: viewModel.answers[index - 1]));
+              onTap: () =>
+                  answer.isCurrentAnswer ? null : onSave(answer: answer.answer),
+              child: SurveyAnswer(viewModel: answer));
         });
   }
 }
