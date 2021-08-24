@@ -46,10 +46,19 @@ void main() {
     presenter = SurveysPresenterSpy();
     initStreams();
     mockStreams();
-    final surveysPage = GetMaterialApp(initialRoute: '/surveys', getPages: [
+    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
+    final surveysPage =
+        GetMaterialApp(initialRoute: '/surveys', navigatorObservers: [
+      routeObserver
+    ], getPages: [
       GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
       GetPage(
-          name: '/any_route', page: () => Scaffold(body: Text('fake page'))),
+          name: '/any_route',
+          page: () => Scaffold(
+              appBar: AppBar(
+                title: Text('Any title'),
+              ),
+              body: Text('fake page'))),
       GetPage(name: '/login', page: () => Scaffold(body: Text('login')))
     ]);
 
@@ -71,6 +80,15 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
     verify(presenter.loadData()).called(1);
+  });
+
+  testWidgets('Should call LoadSurveys on reload', (WidgetTester tester) async {
+    await loadPage(tester);
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+
+    verify(presenter.loadData()).called(2);
   });
 
   testWidgets('Should handle loading correctly', (WidgetTester tester) async {
