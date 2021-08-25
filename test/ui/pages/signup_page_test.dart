@@ -8,6 +8,7 @@ import 'package:mockito/mockito.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
+import '../helpers/helpers.dart';
 
 class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
@@ -72,18 +73,8 @@ void main() {
     initStreams();
     mockStreams();
 
-    final signupPage = GetMaterialApp(
-      initialRoute: '/signup',
-      getPages: [
-        GetPage(name: '/signup', page: () => SignUpPage(presenter: presenter)),
-        GetPage(
-            name: '/any_route',
-            page: () => Scaffold(
-                  body: Text('fake page'),
-                )),
-      ],
-    );
-    await tester.pumpWidget(signupPage);
+    await tester.pumpWidget(makePage(
+        path: '/signup', page: () => SignUpPage(presenter: presenter)));
   }
 
   testWidgets('Should call validate with correct values',
@@ -275,7 +266,7 @@ void main() {
     navigateToController.add('/any_route');
     /** use pumpAndSettle to wait for animations and stuff to happen */
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
 
@@ -284,11 +275,11 @@ void main() {
 
     navigateToController.add('');
     await tester.pump();
-    expect(Get.currentRoute, '/signup');
+    expect(currentRoute, '/signup');
 
     navigateToController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, '/signup');
+    expect(currentRoute, '/signup');
   });
 
   testWidgets('Should call Login on link click', (WidgetTester tester) async {

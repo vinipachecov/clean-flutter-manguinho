@@ -30,7 +30,7 @@ void main() {
 
   group('post', () {
     PostExpectation mockRequest() => when(
-        client.put(any, body: anyNamed('body'), headers: anyNamed('headers')));
+        client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
 
     void mockResponse(int statusCode,
         {String body = '{"any_key":"any_value"}'}) {

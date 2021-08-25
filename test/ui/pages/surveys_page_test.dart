@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
 import 'package:mockito/mockito.dart';
+import '../helpers/helpers.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
@@ -46,23 +47,9 @@ void main() {
     presenter = SurveysPresenterSpy();
     initStreams();
     mockStreams();
-    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
-    final surveysPage =
-        GetMaterialApp(initialRoute: '/surveys', navigatorObservers: [
-      routeObserver
-    ], getPages: [
-      GetPage(name: '/surveys', page: () => SurveysPage(presenter)),
-      GetPage(
-          name: '/any_route',
-          page: () => Scaffold(
-              appBar: AppBar(
-                title: Text('Any title'),
-              ),
-              body: Text('fake page'))),
-      GetPage(name: '/login', page: () => Scaffold(body: Text('login')))
-    ]);
 
-    await tester.pumpWidget(surveysPage);
+    await tester.pumpWidget(
+        makePage(path: '/surveys', page: () => SurveysPage(presenter)));
   }
 
   List<SurveyViewModel> makeSurveys() => [
@@ -174,7 +161,7 @@ void main() {
     navigateToController.add('/any_route');
     /** use pumpAndSettle to wait for animations and stuff to happen */
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
 
@@ -186,7 +173,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/login');
+    expect(currentRoute, '/login');
     expect(find.text('login'), findsOneWidget);
   });
 
@@ -196,11 +183,11 @@ void main() {
     isSessionExpiredController.add(false);
     /** use pumpAndSettle to wait for animations and stuff to happen */
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/surveys');
+    expect(currentRoute, '/surveys');
 
     isSessionExpiredController.add(null);
     /** use pumpAndSettle to wait for animations and stuff to happen */
     await tester.pumpAndSettle();
-    expect(Get.currentRoute, '/surveys');
+    expect(currentRoute, '/surveys');
   });
 }

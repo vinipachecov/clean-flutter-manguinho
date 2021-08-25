@@ -6,9 +6,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/route_manager.dart';
 import 'package:mockito/mockito.dart';
 
+import '../helpers/helpers.dart';
+
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
-void main () {
+void main() {
   SplashPresenterSpy presenter;
   StreamController<String> navigateToController;
 
@@ -19,22 +21,20 @@ void main () {
   Future<void> loadPage(tester) async {
     presenter = SplashPresenterSpy();
     navigateToController = StreamController<String>();
-    when(presenter.navigateToStream).thenAnswer((_) => navigateToController.stream);
+    when(presenter.navigateToStream)
+        .thenAnswer((_) => navigateToController.stream);
     await tester.pumpWidget(
-      GetMaterialApp(
-        initialRoute: "/",
-        getPages: [
-          GetPage(name: "/", page: () => SplashPage(presenter: presenter)),
-          GetPage(name: 'any_route', page: () => Scaffold(body: Text('fake page')))
-        ],)
-      );
+        makePage(path: '/', page: () => SplashPage(presenter: presenter)));
   }
-  testWidgets('Should present spinner on page load', (WidgetTester tester) async {
+
+  testWidgets('Should present spinner on page load',
+      (WidgetTester tester) async {
     await loadPage(tester);
-    expect (find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('Should call loadCurrentAccount on page load', (WidgetTester tester) async {
+  testWidgets('Should call loadCurrentAccount on page load',
+      (WidgetTester tester) async {
     await loadPage(tester);
     verify(presenter.checkAccount()).called(1);
   });
@@ -44,7 +44,7 @@ void main () {
     navigateToController.add('/any_route');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
 
@@ -53,10 +53,10 @@ void main () {
 
     navigateToController.add('');
     await tester.pump();
-    expect(Get.currentRoute, '/');
+    expect(currentRoute, '/');
 
     navigateToController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, '/');
+    expect(currentRoute, '/');
   });
 }
