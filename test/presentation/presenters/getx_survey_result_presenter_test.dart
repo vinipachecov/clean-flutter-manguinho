@@ -10,6 +10,8 @@ import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/presentation/presenters/presenters.dart';
 import 'package:clean_flutter_manguinho/ui/pages/survey_result/survey_result.dart';
 
+import '../../mocks/fake_survey_result_factory.dart';
+
 class LoadSurveyResultSpy extends Mock implements LoadSurveyResult {}
 
 class SaveSurveyResultSpy extends Mock implements SaveSurveyResult {}
@@ -30,27 +32,12 @@ void main() {
   //
   String answer;
 
-  SurveyResultEntity mockValidData() => SurveyResultEntity(
-          surveyId: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          answers: [
-            SurveyAnswerEntity(
-                image: faker.internet.httpUrl(),
-                answer: faker.lorem.sentence(),
-                isCurrentAnswer: faker.randomGenerator.boolean(),
-                percent: faker.randomGenerator.integer(100)),
-            SurveyAnswerEntity(
-                answer: faker.lorem.sentence(),
-                isCurrentAnswer: faker.randomGenerator.boolean(),
-                percent: faker.randomGenerator.integer(100))
-          ]);
-
   PostExpectation mockLoadSurveyResultCall() =>
       when(loadSurveyResultSpy.loadBySurvey(surveyId: surveyId));
 
   void mockLoadSurveyResult(SurveyResultEntity data) {
     loadResult = data;
-    mockLoadSurveyResultCall().thenAnswer((_) async => loadResult);
+    mockLoadSurveyResultCall().thenAnswer((_) async => data);
   }
 
   void mockLoadSurveyResultError(error) {
@@ -99,8 +86,8 @@ void main() {
         surveyId: surveyId);
 
     // Mock Success Case
-    mockLoadSurveyResult(mockValidData());
-    mockSaveSurveyResult(mockValidData());
+    mockLoadSurveyResult(FakeSurveyResultFactory.makeEntity());
+    mockSaveSurveyResult(FakeSurveyResultFactory.makeEntity());
   });
 
   group('loadData', () {
@@ -112,8 +99,10 @@ void main() {
 
     test('Should emit correct events on success', () async {
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-      sut.surveyResultStream.listen(
-          expectAsync1((result) => expect(result, mapToViewModel(loadResult))));
+      sut.surveyResultStream.listen(expectAsync1((result) {
+        final viewModel = mapToViewModel(loadResult);
+        expect(result, viewModel);
+      }));
       await sut.loadData();
 
       verify(loadSurveyResultSpy.loadBySurvey(surveyId: surveyId)).called(1);

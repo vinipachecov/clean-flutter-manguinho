@@ -10,6 +10,8 @@ import 'package:clean_flutter_manguinho/data/http/http_client.dart';
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
 
+import '../../../mocks/fake_survey_result_factory.dart';
+
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
@@ -26,27 +28,6 @@ void main() {
 
   void mockHttpError(error) => mockRequest().thenThrow(error);
 
-  Map mockValidData() => {
-        'surveyId': faker.guid.guid(),
-        'question': faker.randomGenerator.string(50),
-        'answers': [
-          {
-            'image': faker.internet.httpUrl(),
-            'answer': faker.randomGenerator.string(20),
-            'percent': faker.randomGenerator.integer(100),
-            'count': faker.randomGenerator.integer(1000),
-            'isCurrentAccountAnswer': faker.randomGenerator.boolean()
-          },
-          {
-            'answer': faker.randomGenerator.string(20),
-            'percent': faker.randomGenerator.integer(100),
-            'count': faker.randomGenerator.integer(1000),
-            'isCurrentAccountAnswer': faker.randomGenerator.boolean()
-          }
-        ],
-        'date': faker.date.dateTime().toIso8601String()
-      };
-
   void mockHttpData(Map data) {
     surveyResult = data;
     mockRequest().thenAnswer((_) async => data);
@@ -57,7 +38,7 @@ void main() {
     httpClient = HttpClientSpy();
     answer = faker.lorem.sentence();
     sut = RemoteSaveSurveyResult(url: url, httpClient: httpClient);
-    mockHttpData(mockValidData());
+    mockHttpData(FakeSurveyResultFactory.makeApiJson());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.save(answer: answer);
@@ -94,7 +75,7 @@ void main() {
   test(
       'Should throw UnexpectedError if httpClient returns 200 with invalid data',
       () async {
-    mockHttpData({'invalid_key': 'invalid_key'});
+    mockHttpData(FakeSurveyResultFactory.makeInvalidApiJson());
 
     final future = sut.save(answer: answer);
 

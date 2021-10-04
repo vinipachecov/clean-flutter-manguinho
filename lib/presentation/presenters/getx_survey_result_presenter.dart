@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
-import '../helpers/helpers.dart';
+import 'package:clean_flutter_manguinho/presentation/helpers/helpers.dart';
 
 class GetxLoadSurveyResultPresenter extends GetxController
     with LoadingManager, SessionManager

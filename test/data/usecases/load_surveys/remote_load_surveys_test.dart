@@ -4,13 +4,12 @@ import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-
 import 'package:clean_flutter_manguinho/data/http/http_client.dart';
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
 import 'package:clean_flutter_manguinho/data/usecases/load_surveys/load_surveys.dart';
 
-
+import '../../../mocks/mocks.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
@@ -20,37 +19,21 @@ void main() {
   RemoteLoadSurveys sut;
   List<Map> list;
 
-  PostExpectation mockRequest() =>
-    when(httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
+  PostExpectation mockRequest() => when(
+      httpClient.request(url: anyNamed('url'), method: anyNamed('method')));
 
-  void mockHttpError(error) =>
-    mockRequest().thenThrow(error);
+  void mockHttpError(error) => mockRequest().thenThrow(error);
 
-  List<Map> mockValidData() => [
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(50),
-          'didAnswer': faker.randomGenerator.boolean(),
-          'date': faker.date.dateTime().toIso8601String()
-        },
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(50),
-          'didAnswer': faker.randomGenerator.boolean(),
-          'date': faker.date.dateTime().toIso8601String()
-        }
-      ];
-
-    void mockHttpData(List<Map> data) {
-      list = data;
-      mockRequest().thenAnswer((_) async => data);
-    }
+  void mockHttpData(List<Map> data) {
+    list = data;
+    mockRequest().thenAnswer((_) async => data);
+  }
 
   setUp(() {
     url = faker.internet.httpUrl();
     httpClient = HttpClientSpy();
     sut = RemoteLoadSurveys(url: url, httpClient: httpClient);
-    mockHttpData(mockValidData());
+    mockHttpData(FakeSurveysFactory.makeApiJson());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.load();
@@ -77,8 +60,10 @@ void main() {
     ]);
   });
 
-  test('Should throw UnexpectedError if httpClient returns 200 with invalid data', () async {
-    mockHttpData([{'invalid_key': 'invalid_key'}]);
+  test(
+      'Should throw UnexpectedError if httpClient returns 200 with invalid data',
+      () async {
+    mockHttpData(FakeSurveysFactory.makeInvalidApiJson());
 
     final future = sut.load();
 
@@ -86,7 +71,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if httpClient returns 404', () async {
-     mockHttpError(HttpError.notFound);
+    mockHttpError(HttpError.notFound);
 
     final future = sut.load();
 
@@ -94,7 +79,7 @@ void main() {
   });
 
   test('Should throw UnexpectedError if httpClient returns 500', () async {
-     mockHttpError(HttpError.serverError);
+    mockHttpError(HttpError.serverError);
 
     final future = sut.load();
 
@@ -102,7 +87,7 @@ void main() {
   });
 
   test('Should throw accessDenied if httpClient returns 403', () async {
-     mockHttpError(HttpError.forbidden);
+    mockHttpError(HttpError.forbidden);
 
     final future = sut.load();
 

@@ -10,6 +10,8 @@ import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import 'package:clean_flutter_manguinho/presentation/presenters/presenters.dart';
 
+import '../../mocks/mocks.dart';
+
 class ValidationSpy extends Mock implements Validation {}
 
 class AddAccountSpy extends Mock implements AddAccount {}
@@ -26,11 +28,13 @@ void main() {
   String passwordConfirmation;
   String name;
   String token;
+  AccountEntity account;
 
   PostExpectation mockAddAccountCall() => when(addAccount.add(any));
 
-  void mockAddAccount({String field, String value}) {
-    mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAddAccount(AccountEntity data) {
+    account = data;
+    mockAddAccountCall().thenAnswer((_) async => data);
   }
 
   void mockAddAccountError(error) {
@@ -64,13 +68,13 @@ void main() {
     name = faker.person.name();
     password = faker.internet.password();
     passwordConfirmation = password;
-    token = faker.guid.guid();
+    account = FakeAccountFactory.makeEntity();
     mockValidation();
-    mockAddAccount();
+    mockAddAccount(account);
   });
 
   test('Should call Validation with correct email', () {
-     final formData = {
+    final formData = {
       'name': null,
       'email': email,
       'password': null,
@@ -78,7 +82,6 @@ void main() {
     };
 
     sut.validateEmail(email);
-
 
     verify(validation.validate(field: 'email', input: formData)).called(1);
   });
@@ -120,7 +123,7 @@ void main() {
 
   test('Should call Validation with correct name', () {
     sut.validateName(name);
-     final formData = {
+    final formData = {
       'name': name,
       'email': null,
       'password': null,
@@ -215,16 +218,14 @@ void main() {
 
   test('Should call Validation with correct passwordConfirmation', () {
     sut.validatePasswordConfirmation(passwordConfirmation);
-     final formData = {
+    final formData = {
       'name': null,
       'email': null,
       'password': null,
       'passwordConfirmation': passwordConfirmation
     };
 
-
-    verify(validation.validate(
-            field: 'passwordConfirmation', input: formData))
+    verify(validation.validate(field: 'passwordConfirmation', input: formData))
         .called(1);
   });
 
@@ -302,7 +303,7 @@ void main() {
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     await sut.signUp();
-    verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
+    verify(saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit  UnexpectedError if SaveCurrentAccount fails', () async {
@@ -330,8 +331,6 @@ void main() {
     await sut.signUp();
   });
 
-
-
   test('Should emit correct events on EmailAlreadyInUse', () async {
     mockAddAccountError(DomainError.emailInUse);
 
@@ -341,8 +340,8 @@ void main() {
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
-    sut.mainErrorStream.listen(
-        expectAsync1((error) => expect(error, UIError.emailInUse)));
+    sut.mainErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.emailInUse)));
 
     await sut.signUp();
   });
@@ -365,17 +364,19 @@ void main() {
   test('Should change page on success', () async {
     sut.validateEmail(email);
     sut.validatePassword(password);
-     sut.validatePassword(password);
+    sut.validatePassword(password);
     sut.validatePasswordConfirmation(passwordConfirmation);
 
-    sut.navigateToStream.listen((expectAsync1((page) => expect(page, '/surveys'))));
+    sut.navigateToStream
+        .listen((expectAsync1((page) => expect(page, '/surveys'))));
 
     await sut.signUp();
   });
 
   test('Should go to Login page link click', () async {
     // always remember to set stream tests before function invocation
-    sut.navigateToStream.listen((expectAsync1((page) => expect(page, '/login'))));
+    sut.navigateToStream
+        .listen((expectAsync1((page) => expect(page, '/login'))));
 
     sut.goToLogin();
   });

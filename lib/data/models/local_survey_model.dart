@@ -25,7 +25,7 @@ class LocalSurveyModel {
         id: json['id'],
         question: json['question'],
         date: DateTime.parse(json['date']),
-        didAnswer: bool.fromEnvironment(json['didAnswer']));
+        didAnswer: json['didAnswer'].toLowerCase() == "true");
   }
 
   factory LocalSurveyModel.fromEntity(SurveyEntity entity) {

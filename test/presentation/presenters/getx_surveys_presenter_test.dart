@@ -11,25 +11,14 @@ import 'package:clean_flutter_manguinho/presentation/presenters/getx_surveys_pre
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
+import '../../mocks/mocks.dart';
+
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
   LoadSurveysSpy loadSurveys;
   GetxSurveysPresenter sut;
   List<SurveyEntity> surveys;
-
-  List<SurveyEntity> mockValidData() => [
-        SurveyEntity(
-            id: faker.guid.guid(),
-            question: faker.lorem.sentence(),
-            dateTime: DateTime(2020, 2, 20),
-            didAnswer: true),
-        SurveyEntity(
-            id: faker.guid.guid(),
-            question: faker.lorem.sentence(),
-            dateTime: DateTime(2018, 10, 3),
-            didAnswer: false)
-      ];
 
   PostExpectation mockloadSurveysCall() => when(loadSurveys.load());
 
@@ -54,7 +43,7 @@ void main() {
     sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
 
     // Mock Success Case
-    mockLoadSurveys(mockValidData());
+    mockLoadSurveys(FakeSurveysFactory.makeEntities());
   });
   test('Should call loadSurveys on loadData', () async {
     await sut.loadData();
@@ -68,12 +57,12 @@ void main() {
           SurveyViewModel(
               id: surveys[0].id,
               question: surveys[0].question,
-              date: '20 Fev 2020',
+              date: '02 Feb 2020',
               didAnswer: surveys[0].didAnswer),
           SurveyViewModel(
               id: surveys[1].id,
               question: surveys[1].question,
-              date: '03 Outv 2020',
+              date: '20 Dec 2018',
               didAnswer: surveys[1].didAnswer),
         ])));
     await sut.loadData();

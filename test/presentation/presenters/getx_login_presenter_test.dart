@@ -12,6 +12,8 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import 'package:clean_flutter_manguinho/presentation/presenters/presenters.dart';
 
+import '../../mocks/fake_account_factory.dart';
+
 class ValidationSpy extends Mock implements Validation {}
 
 class AuthenticationSpy extends Mock implements Authentication {}
@@ -25,7 +27,7 @@ void main() {
   SaveCurrentAccountSpy saveCurrentAccount;
   String email;
   String password;
-  String token;
+  AccountEntity account;
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(
       field: field == null ? anyNamed('field') : field,
@@ -37,8 +39,9 @@ void main() {
 
   PostExpectation mockAuthenticationCall() => when(authentication.auth(any));
 
-  void mockAuthentication({String field, String value}) {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAuthentication(AccountEntity data) {
+    account = data;
+    mockAuthenticationCall().thenAnswer((_) async => data);
   }
 
   void mockAuthenticationError(error) {
@@ -62,9 +65,9 @@ void main() {
         saveCurrentAccount: saveCurrentAccount);
     email = faker.internet.email();
     password = faker.internet.password();
-    token = faker.guid.guid();
+    account = FakeAccountFactory.makeEntity();
     mockValidation();
-    mockAuthentication();
+    mockAuthentication(account);
   });
 
   test('Should call Validation with correct email', () {
@@ -173,7 +176,7 @@ void main() {
     sut.validatePassword(password);
 
     await sut.auth();
-    verify(saveCurrentAccount.save(AccountEntity(token))).called(1);
+    verify(saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit correct events on Authentication success', () async {
