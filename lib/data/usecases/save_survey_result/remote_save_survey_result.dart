@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/entities/survey_result_entity.dart';
@@ -9,9 +8,9 @@ class RemoteSaveSurveyResult implements SaveSurveyResult {
   final String url;
   final HttpClient httpClient;
 
-  RemoteSaveSurveyResult({@required this.url, @required this.httpClient});
+  RemoteSaveSurveyResult({required this.url, required this.httpClient});
 
-  Future<SurveyResultEntity> save({String answer}) async {
+  Future<SurveyResultEntity> save({required String answer}) async {
     try {
       final json = await httpClient
           .request(url: url, method: 'put', body: {'answer': answer});

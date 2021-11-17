@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
 class SurveyViewModel extends Equatable {
@@ -10,9 +9,9 @@ class SurveyViewModel extends Equatable {
   List get props => [id, question, date, didAnswer];
 
   SurveyViewModel({
-    @required this.id,
-    @required this.question,
-    @required this.date,
-    @required this.didAnswer,
+    required this.id,
+    required this.question,
+    required this.date,
+    required this.didAnswer,
   });
 }

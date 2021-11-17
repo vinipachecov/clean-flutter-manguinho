@@ -1,36 +1,36 @@
 import 'package:clean_flutter_manguinho/main/composites/composites.dart';
 
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 
-import '../../mocks/fake_surveys_factory.dart';
+import '../../domain/mocks/mocks.dart';
 
 class RemoteLoadSurveysSpy extends Mock implements RemoteLoadSurveys {}
 
 class LocalLoadSurveysSpy extends Mock implements LocalLoadSurveys {}
 
 void main() {
-  RemoteLoadSurveysSpy remote;
-  LocalLoadSurveysSpy local;
-  RemoteLoadSurveysWithLocalFallback sut;
-  List<SurveyEntity> remoteSurveys;
-  List<SurveyEntity> localSurveys;
+  late RemoteLoadSurveysSpy remote;
+  late LocalLoadSurveysSpy local;
+  late RemoteLoadSurveysWithLocalFallback sut;
+  late List<SurveyEntity> remoteSurveys;
+  late List<SurveyEntity> localSurveys;
 
-  PostExpectation mockLocalLoadCall() => when(local.load());
+  When mockLocalLoadCall() => when(() => local.load());
 
   void mockLocalLoad() {
-    localSurveys = FakeSurveysFactory.makeEntities();
+    localSurveys = EntityFactory.makeSurveyList();
     mockLocalLoadCall().thenAnswer((_) async => localSurveys);
   }
 
-  PostExpectation mockRemoteLoadCall() => when(remote.load());
+  When mockRemoteLoadCall() => when(() => remote.load());
 
   void mockRemoteLoad() {
-    remoteSurveys = FakeSurveysFactory.makeEntities();
+    remoteSurveys = EntityFactory.makeSurveyList();
     mockRemoteLoadCall().thenAnswer((_) async => remoteSurveys);
   }
 
@@ -52,13 +52,13 @@ void main() {
   test('Should call remote load', () async {
     await sut.load();
 
-    verify(remote.load()).called(1);
+    verify(() => remote.load()).called(1);
   });
 
   test('Should call local save with remote data', () async {
     await sut.load();
 
-    verify(local.save(remoteSurveys)).called(1);
+    verify(() => local.save(remoteSurveys)).called(1);
   });
 
   test('Should return remote data', () async {
@@ -80,8 +80,8 @@ void main() {
 
     await sut.load();
 
-    verify(local.validate()).called(1);
-    verify(local.load()).called(1);
+    verify(() => local.validate()).called(1);
+    verify(() => local.load()).called(1);
   });
 
   test('Should return local surveys', () async {

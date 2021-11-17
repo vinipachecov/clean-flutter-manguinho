@@ -1,6 +1,3 @@
-
-import 'package:meta/meta.dart';
-
 import '../entities/entities.dart';
 import 'package:equatable/equatable.dart';
 
@@ -14,12 +11,11 @@ class AddAccountParams extends Equatable {
   final String password;
   final String passwordConfirmation;
 
-
-  List get props => [email,name, password, passwordConfirmation];
+  List get props => [email, name, password, passwordConfirmation];
   AddAccountParams({
-    @required this.name,
-    @required this.email,
-    @required this.password,
-    @required this.passwordConfirmation,
+    required this.name,
+    required this.email,
+    required this.password,
+    required this.passwordConfirmation,
   });
 }

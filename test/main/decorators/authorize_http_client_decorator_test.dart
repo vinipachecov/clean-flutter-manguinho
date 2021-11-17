@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/main/decorators/decorators.dart';
@@ -15,18 +15,18 @@ class DeleteSecureCacheStorageSpy extends Mock
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  FetchSecureCacheStorageSpy fetchSecureCacheStorageSpy;
-  DeleteSecureCacheStorageSpy deleteSecureCacheStorageSpy;
-  AuthorizeHttpClientDecorator sut;
-  String url;
-  String method;
-  Map body;
-  HttpClientSpy httpClientSpy;
-  String token;
-  String httpResponse;
+  late FetchSecureCacheStorageSpy fetchSecureCacheStorageSpy;
+  late DeleteSecureCacheStorageSpy deleteSecureCacheStorageSpy;
+  late AuthorizeHttpClientDecorator sut;
+  late String url;
+  late String method;
+  late Map body;
+  late HttpClientSpy httpClientSpy;
+  late String token;
+  late String httpResponse;
 
-  PostExpectation mockTokenCall() {
-    return when(fetchSecureCacheStorageSpy.fetch(any));
+  When mockTokenCall() {
+    return when(() => fetchSecureCacheStorageSpy.fetch(any()));
   }
 
   void mockToken() {
@@ -34,12 +34,12 @@ void main() {
     mockTokenCall().thenAnswer((_) async => token);
   }
 
-  PostExpectation mockHttpResponseCall() {
-    return when(httpClientSpy.request(
-        url: anyNamed('url'),
-        method: anyNamed('method'),
-        body: anyNamed('body'),
-        headers: anyNamed('headers')));
+  When mockHttpResponseCall() {
+    return when(() => httpClientSpy.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
+        headers: any(named: 'headers')));
   }
 
   void mockHttpResponse() {
@@ -73,7 +73,7 @@ void main() {
   test('Should call FetchSecureCacheStorage with correct key', () async {
     await sut.request(url: url, method: method, body: body);
 
-    verify(fetchSecureCacheStorageSpy.fetch('token')).called(1);
+    verify(() => fetchSecureCacheStorageSpy.fetch('token')).called(1);
   });
 
   test('Should call decoratee with access token on header', () async {
@@ -83,7 +83,7 @@ void main() {
         body: body,
         headers: {'any_header': 'any_value'});
 
-    verify(httpClientSpy.request(
+    verify(() => httpClientSpy.request(
             url: url,
             method: method,
             body: body,
@@ -103,7 +103,7 @@ void main() {
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(deleteSecureCacheStorageSpy.delete('token')).called(1);
+    verify(() => deleteSecureCacheStorageSpy.delete('token')).called(1);
   });
 
   test('Should rethrow if decoratee throws', () async {
@@ -121,9 +121,9 @@ void main() {
      * untilCalled is a helper method from Mockito to ensure that our test
      * gives enough time for an async method to run. 
      */
-    await untilCalled(deleteSecureCacheStorageSpy.delete('token'));
+    await untilCalled(() => deleteSecureCacheStorageSpy.delete('token'));
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(deleteSecureCacheStorageSpy.delete('token')).called(1);
+    verify(() => deleteSecureCacheStorageSpy.delete('token')).called(1);
   });
 }

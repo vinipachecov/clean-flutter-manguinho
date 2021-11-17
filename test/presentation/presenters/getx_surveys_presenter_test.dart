@@ -1,5 +1,4 @@
-import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/domain/entities/survey_entity.dart';
@@ -11,16 +10,16 @@ import 'package:clean_flutter_manguinho/presentation/presenters/getx_surveys_pre
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
-import '../../mocks/mocks.dart';
+import '../../domain/mocks/mocks.dart';
 
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
-  LoadSurveysSpy loadSurveys;
-  GetxSurveysPresenter sut;
-  List<SurveyEntity> surveys;
+  late LoadSurveysSpy loadSurveys;
+  late GetxSurveysPresenter sut;
+  late List<SurveyEntity> surveys;
 
-  PostExpectation mockloadSurveysCall() => when(loadSurveys.load());
+  When mockloadSurveysCall() => when(() => loadSurveys.load());
 
   void mockLoadSurveys(List<SurveyEntity> data) {
     surveys = data;
@@ -43,12 +42,12 @@ void main() {
     sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
 
     // Mock Success Case
-    mockLoadSurveys(FakeSurveysFactory.makeEntities());
+    mockLoadSurveys(EntityFactory.makeSurveyList());
   });
   test('Should call loadSurveys on loadData', () async {
     await sut.loadData();
 
-    verify(loadSurveys.load()).called(1);
+    verify(() => loadSurveys.load()).called(1);
   });
 
   test('Should emit correct events on success', () async {
@@ -67,7 +66,7 @@ void main() {
         ])));
     await sut.loadData();
 
-    verify(loadSurveys.load()).called(1);
+    verify(() => loadSurveys.load()).called(1);
   });
 
   test('Should emit correct events on failure', () async {

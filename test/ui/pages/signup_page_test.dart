@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
@@ -13,43 +12,43 @@ import '../helpers/helpers.dart';
 class SignUpPresenterSpy extends Mock implements SignUpPresenter {}
 
 void main() {
-  SignUpPresenter presenter;
-  StreamController<UIError> emailErrorController;
-  StreamController<UIError> passwordErrorController;
-  StreamController<UIError> passwordConfirmationErrorController;
-  StreamController<UIError> nameErrorController;
-  StreamController<UIError> mainErrorController;
-  StreamController<bool> isFormValidController;
-  StreamController<bool> isLoadingController;
-  StreamController<String> navigateToController;
+  late SignUpPresenter presenter;
+  late StreamController<UIError?> emailErrorController;
+  late StreamController<UIError?> passwordErrorController;
+  late StreamController<UIError?> passwordConfirmationErrorController;
+  late StreamController<UIError?> nameErrorController;
+  late StreamController<UIError?> mainErrorController;
+  late StreamController<bool> isFormValidController;
+  late StreamController<bool> isLoadingController;
+  late StreamController<String?> navigateToController;
 
   void initStreams() {
-    emailErrorController = StreamController<UIError>();
-    passwordErrorController = StreamController<UIError>();
-    passwordConfirmationErrorController = StreamController<UIError>();
-    nameErrorController = StreamController<UIError>();
-    mainErrorController = StreamController<UIError>();
+    emailErrorController = StreamController<UIError?>();
+    passwordErrorController = StreamController<UIError?>();
+    passwordConfirmationErrorController = StreamController<UIError?>();
+    nameErrorController = StreamController<UIError?>();
+    mainErrorController = StreamController<UIError?>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
-    navigateToController = StreamController<String>();
+    navigateToController = StreamController<String?>();
   }
 
   void mockStreams() {
-    when(presenter.nameErrorStream)
+    when(() => presenter.nameErrorStream)
         .thenAnswer((_) => nameErrorController.stream);
-    when(presenter.emailErrorStream)
+    when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
-    when(presenter.passwordErrorStream)
+    when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
-    when(presenter.passwordConfirmationErrorStream)
+    when(() => presenter.passwordConfirmationErrorStream)
         .thenAnswer((_) => passwordConfirmationErrorController.stream);
-    when(presenter.isFormValidStream)
+    when(() => presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
-    when(presenter.isLoadingStream)
+    when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-    when(presenter.mainErrorStream)
+    when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
-    when(presenter.navigateToStream)
+    when(() => presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
   }
 
@@ -83,19 +82,19 @@ void main() {
 
     final name = faker.person.name();
     await tester.enterText(find.bySemanticsLabel('Nome'), name);
-    verify(presenter.validateName(name));
+    verify(() => presenter.validateName(name));
 
     final email = faker.internet.email();
     await tester.enterText(find.bySemanticsLabel('Email'), email);
-    verify(presenter.validateEmail(email));
+    verify(() => presenter.validateEmail(email));
 
     final password = faker.internet.password();
     await tester.enterText(find.bySemanticsLabel('Senha'), password);
-    verify(presenter.validatePassword(password));
+    verify(() => presenter.validatePassword(password));
 
     await tester.enterText(find.bySemanticsLabel('Confirmar Senha'), password);
 
-    verify(presenter.validatePasswordConfirmation(password));
+    verify(() => presenter.validatePasswordConfirmation(password));
   });
 
   testWidgets('Should present email error', (WidgetTester tester) async {
@@ -187,7 +186,7 @@ void main() {
     isFormValidController.add(true);
     await tester.pump();
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNotNull);
   });
 
@@ -198,7 +197,7 @@ void main() {
     isFormValidController.add(false);
     await tester.pump();
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, null);
   });
 
@@ -207,12 +206,12 @@ void main() {
 
     isFormValidController.add(true);
     await tester.pump();
-    final button = find.byType(RaisedButton);
+    final button = find.byType(ElevatedButton);
     await tester.ensureVisible(button);
     await tester.tap(button);
     await tester.pump();
 
-    verify(presenter.signUp()).called(1);
+    verify(() => presenter.signUp()).called(1);
   });
 
   testWidgets('Should present loading', (WidgetTester tester) async {
@@ -232,11 +231,6 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-
-    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should present error message if signUp fails',
@@ -290,6 +284,6 @@ void main() {
     await tester.tap(button);
     await tester.pump();
 
-    verify(presenter.goToLogin()).called(1);
+    verify(() => presenter.goToLogin()).called(1);
   });
 }

@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 
 class LocalSurveyModel {
@@ -9,10 +7,10 @@ class LocalSurveyModel {
   final bool didAnswer;
 
   LocalSurveyModel({
-    @required this.id,
-    @required this.question,
-    @required this.date,
-    @required this.didAnswer,
+    required this.id,
+    required this.question,
+    required this.date,
+    required this.didAnswer,
   });
 
   factory LocalSurveyModel.fromJson(Map json) {

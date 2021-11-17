@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
@@ -9,7 +7,7 @@ class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
   RemoteLoadSurveys remote;
   LocalLoadSurveys local;
   RemoteLoadSurveysWithLocalFallback(
-      {@required this.remote, @required this.local});
+      {required this.remote, required this.local});
 
   Future<List<SurveyEntity>> load() async {
     try {

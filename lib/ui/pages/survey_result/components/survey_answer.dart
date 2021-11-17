@@ -4,8 +4,8 @@ import 'package:clean_flutter_manguinho/ui/pages/survey_result/survey_result.dar
 
 class SurveyAnswer extends StatelessWidget {
   const SurveyAnswer({
-    Key key,
-    @required this.viewModel,
+    Key? key,
+    required this.viewModel,
   }) : super(key: key);
 
   final SurveyAnswerViewModel viewModel;
@@ -30,7 +30,7 @@ class SurveyAnswer extends StatelessWidget {
         children.insert(
             0,
             Image.network(
-              viewModel.image,
+              viewModel.image!,
               width: 40,
             ));
       }

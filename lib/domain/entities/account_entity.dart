@@ -1,5 +1,5 @@
-
 import 'package:equatable/equatable.dart';
+
 class AccountEntity extends Equatable {
   final String token;
 
@@ -8,5 +8,6 @@ class AccountEntity extends Equatable {
 
   AccountEntity(this.token);
 
-  factory AccountEntity.fromJson(Map json) => AccountEntity(json['accessToken']);
+  factory AccountEntity.fromJson(Map json) =>
+      AccountEntity(json['accessToken']);
 }

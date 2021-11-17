@@ -1,6 +1,3 @@
-
-import 'package:meta/meta.dart';
-
 import '../entities/entities.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,9 +10,6 @@ class AuthenticationParams extends Equatable {
   final String secret;
 
   @override
-  List get props => [email,secret];
-  AuthenticationParams({
-    @required this.email,
-    @required this.secret
-  });
+  List get props => [email, secret];
+  AuthenticationParams({required this.email, required this.secret});
 }

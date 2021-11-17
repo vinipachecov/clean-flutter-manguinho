@@ -2,7 +2,6 @@ import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
 import 'package:clean_flutter_manguinho/presentation/mixins/mixins.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
-import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
@@ -15,20 +14,20 @@ class GetxLoadSurveyResultPresenter extends GetxController
   final SaveSurveyResult saveSurveyResult;
   final String surveyId;
 
-  final _surveyResult = Rx<SurveyResultViewModel>();
+  final _surveyResult = Rx<SurveyResultViewModel?>(null);
 
-  Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult.stream;
+  Stream<SurveyResultViewModel?> get surveyResultStream => _surveyResult.stream;
 
   GetxLoadSurveyResultPresenter(
-      {@required this.loadSurveyResult,
-      @required this.saveSurveyResult,
-      this.surveyId});
+      {required this.loadSurveyResult,
+      required this.saveSurveyResult,
+      required this.surveyId});
 
   Future<void> loadData() async {
     await showResult(() => loadSurveyResult.loadBySurvey(surveyId: surveyId));
   }
 
-  Future<void> save({String answer}) async {
+  Future<void> save({required String answer}) async {
     await showResult(() => saveSurveyResult.save(answer: answer));
   }
 

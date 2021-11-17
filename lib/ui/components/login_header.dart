@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LoginHeader extends StatelessWidget {
   const LoginHeader({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -25,8 +25,7 @@ class LoginHeader extends StatelessWidget {
                   blurRadius: 4,
                   color: Colors.black)
             ],
-            borderRadius:
-                BorderRadius.only(bottomLeft: Radius.circular(80))),
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(80))),
         child: Image(image: AssetImage('lib/ui/assets/logo.png')));
   }
 }

@@ -1,5 +1,4 @@
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
-import 'package:meta/meta.dart';
 import './models.dart';
 
 class LocalSurveyResultModel {
@@ -8,9 +7,7 @@ class LocalSurveyResultModel {
   final List<LocalSurveyAnswerModel> answers;
 
   LocalSurveyResultModel(
-      {@required this.surveyId,
-      @required this.question,
-      @required this.answers});
+      {required this.surveyId, required this.question, required this.answers});
 
   factory LocalSurveyResultModel.fromJson(Map json) {
     if (!json.keys.toSet().containsAll(['surveyId', 'question', 'answers'])) {

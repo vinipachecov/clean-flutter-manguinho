@@ -5,5 +5,5 @@ import 'package:flutter/material.dart';
 
 Widget makeSurveyResultPage() {
   return SurveyResultPage(
-      makeGetxSurveyResultPresenter(Get.parameters['survey_id']));
+      makeGetxSurveyResultPresenter(Get.parameters['survey_id'] ?? ''));
 }

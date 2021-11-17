@@ -1,14 +1,14 @@
 import '../../helpers/errors/ui_error.dart';
 
 abstract class SignUpPresenter {
-  Stream<UIError> get nameErrorStream;
-  Stream<UIError> get emailErrorStream;
-  Stream<UIError> get passwordErrorStream;
-  Stream<UIError> get passwordConfirmationErrorStream;
-  Stream<UIError> get mainErrorStream;
+  Stream<UIError?> get nameErrorStream;
+  Stream<UIError?> get emailErrorStream;
+  Stream<UIError?> get passwordErrorStream;
+  Stream<UIError?> get passwordConfirmationErrorStream;
+  Stream<UIError?> get mainErrorStream;
   Stream<bool> get isFormValidStream;
   Stream<bool> get isLoadingStream;
-  Stream<String> get navigateToStream;
+  Stream<String?> get navigateToStream;
 
   void validateName(String name);
   void validateEmail(String email);

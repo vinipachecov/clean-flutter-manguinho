@@ -4,13 +4,13 @@ import '../../../domain/usecases/usecases.dart';
 import '../factories.dart';
 
 // Example of Liskov Substitution principle ***
-LoadSurveyResult makeRemoteLoadSurveyResult(String surveyId) {
+RemoteLoadSurveyResult makeRemoteLoadSurveyResult(String surveyId) {
   return RemoteLoadSurveyResult(
       url: makeApiUrl('surveys/$surveyId/results'),
       httpClient: makeAuthorizeHttpClientDecorator());
 }
 
-LoadSurveyResult makeLocalLoadSurveyResult(String surveyId) {
+LocalLoadSurveyResult makeLocalLoadSurveyResult(String surveyId) {
   return LocalLoadSurveyResult(
     cacheStorage: makeLocalStorageAdapter(),
   );

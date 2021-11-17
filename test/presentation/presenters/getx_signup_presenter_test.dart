@@ -1,7 +1,7 @@
 import 'package:clean_flutter_manguinho/domain/entities/account_entity.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/errors/ui_error.dart';
@@ -10,7 +10,7 @@ import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import 'package:clean_flutter_manguinho/presentation/presenters/presenters.dart';
 
-import '../../mocks/mocks.dart';
+import '../../domain/mocks/mocks.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
@@ -19,18 +19,17 @@ class AddAccountSpy extends Mock implements AddAccount {}
 class SaveCurrentAccountSpy extends Mock implements SaveCurrentAccount {}
 
 void main() {
-  GetxSignUpPresenter sut;
-  AddAccountSpy addAccount;
-  ValidationSpy validation;
-  SaveCurrentAccountSpy saveCurrentAccount;
-  String email;
-  String password;
-  String passwordConfirmation;
-  String name;
-  String token;
-  AccountEntity account;
+  late GetxSignUpPresenter sut;
+  late AddAccountSpy addAccount;
+  late ValidationSpy validation;
+  late SaveCurrentAccountSpy saveCurrentAccount;
+  late String email;
+  late String password;
+  late String passwordConfirmation;
+  late String name;
+  late AccountEntity account;
 
-  PostExpectation mockAddAccountCall() => when(addAccount.add(any));
+  When mockAddAccountCall() => when(() => addAccount.add(any()));
 
   void mockAddAccount(AccountEntity data) {
     account = data;
@@ -41,16 +40,16 @@ void main() {
     mockAddAccountCall().thenThrow((error));
   }
 
-  PostExpectation mockValidationCall(String field) => when(validation.validate(
-      field: field == null ? anyNamed('field') : field,
-      input: anyNamed('input')));
+  When mockValidationCall(String? field) => when(() => validation.validate(
+      field: field == null ? any(named: 'field') : field,
+      input: any(named: 'input')));
 
-  void mockValidation({String field, ValidationError value}) {
+  void mockValidation({String? field, ValidationError? value}) {
     mockValidationCall(field).thenReturn(value);
   }
 
-  PostExpectation mockSaveCurrentAccountCall() =>
-      when(saveCurrentAccount.save(any));
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentAccount.save(any()));
 
   void mockSaveCurrentAccountError() {
     mockSaveCurrentAccountCall().thenThrow((DomainError.unexpected));
@@ -68,7 +67,7 @@ void main() {
     name = faker.person.name();
     password = faker.internet.password();
     passwordConfirmation = password;
-    account = FakeAccountFactory.makeEntity();
+    account = EntityFactory.makeAccount();
     mockValidation();
     mockAddAccount(account);
   });
@@ -83,7 +82,8 @@ void main() {
 
     sut.validateEmail(email);
 
-    verify(validation.validate(field: 'email', input: formData)).called(1);
+    verify(() => validation.validate(field: 'email', input: formData))
+        .called(1);
   });
 
   test('Should emit email invalidField error if email is invalid', () {
@@ -130,7 +130,7 @@ void main() {
       'passwordConfirmation': null
     };
 
-    verify(validation.validate(field: 'name', input: formData)).called(1);
+    verify(() => validation.validate(field: 'name', input: formData)).called(1);
   });
 
   test('Should emit name invalidField error if name is invalid', () {
@@ -178,7 +178,8 @@ void main() {
       'passwordConfirmation': null
     };
 
-    verify(validation.validate(field: 'password', input: formData)).called(1);
+    verify(() => validation.validate(field: 'password', input: formData))
+        .called(1);
   });
 
   test('Should emit password invalidField error if password is invalid', () {
@@ -225,7 +226,8 @@ void main() {
       'passwordConfirmation': passwordConfirmation
     };
 
-    verify(validation.validate(field: 'passwordConfirmation', input: formData))
+    verify(() =>
+            validation.validate(field: 'passwordConfirmation', input: formData))
         .called(1);
   });
 
@@ -288,12 +290,11 @@ void main() {
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     await sut.signUp();
-    verify(addAccount.add(AddAccountParams(
-            name: name,
-            email: email,
-            password: password,
-            passwordConfirmation: passwordConfirmation)))
-        .called(1);
+    verify(() => addAccount.add(AddAccountParams(
+        name: name,
+        email: email,
+        password: password,
+        passwordConfirmation: passwordConfirmation))).called(1);
   });
 
   test('Should call SaveCurrentAccount with correct values', () async {
@@ -303,7 +304,7 @@ void main() {
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     await sut.signUp();
-    verify(saveCurrentAccount.save(account)).called(1);
+    verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit  UnexpectedError if SaveCurrentAccount fails', () async {

@@ -1,7 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 
-class FakeParamsFactory {
+class ParamsFactory {
   static AddAccountParams makeAddAccount() => AddAccountParams(
       name: faker.person.name(),
       email: faker.internet.email(),

@@ -1,8 +1,8 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import '../../../mocks/fake_params_factory.dart';
-import '../../../mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
+import '../../../domain/mocks/mocks.dart';
 
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
@@ -14,16 +14,16 @@ import 'package:clean_flutter_manguinho/data/http/http.dart';
 class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
-  RemoteAddAccount sut;
-  HttpClientSpy httpClient;
-  String url;
-  AddAccountParams params;
-  Map apiResult;
+  late RemoteAddAccount sut;
+  late HttpClientSpy httpClient;
+  late String url;
+  late AddAccountParams params;
+  late Map apiResult;
 
-  PostExpectation mockRequest() => when(httpClient.request(
-      url: anyNamed('url'),
-      method: anyNamed('method'),
-      body: anyNamed('body')));
+  When mockRequest() => when(() => httpClient.request(
+      url: any(named: 'url'),
+      method: any(named: 'method'),
+      body: any(named: 'body')));
 
   void mockHttpData(Map data) {
     apiResult = data;
@@ -38,18 +38,18 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAddAccount(httpClient: httpClient, url: url);
-    params = FakeParamsFactory.makeAddAccount();
-    mockHttpData(FakeAccountFactory.makeApiJson());
+    params = ParamsFactory.makeAddAccount();
+    mockHttpData(ApiFactory.makeAccountJson());
   });
   test('Should call HttpClient with correct values', () async {
     await sut.add(params);
 
-    verify(httpClient.request(url: url, method: 'post', body: {
-      'name': params.name,
-      'email': params.email,
-      'password': params.password,
-      'passwordConfirmation': params.passwordConfirmation,
-    }));
+    verify(() => httpClient.request(url: url, method: 'post', body: {
+          'name': params.name,
+          'email': params.email,
+          'password': params.password,
+          'passwordConfirmation': params.passwordConfirmation,
+        }));
   });
 
   test('Should throw UnexpectedError if HttpClient returns 400', () async {

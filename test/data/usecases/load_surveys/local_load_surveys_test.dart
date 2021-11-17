@@ -1,4 +1,4 @@
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/domain/entities/entities.dart';
@@ -7,17 +7,18 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:clean_flutter_manguinho/data/usecases/usecases.dart';
 
-import '../../../mocks/mocks.dart';
+import '../../../domain/mocks/mocks.dart';
+import '../../../infra/mocks/mocks.dart';
 
 class CacheStorageSpy extends Mock implements CacheStorage {}
 
 void main() {
   group('load', () {
-    CacheStorageSpy cacheStorageSpy;
-    LocalLoadSurveys sut;
-    List<Map> data;
+    late CacheStorageSpy cacheStorageSpy;
+    late LocalLoadSurveys sut;
+    late List<Map> data;
 
-    PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(any));
+    When mockFetchCall() => when(() => cacheStorageSpy.fetch(any()));
 
     void mockFetch(List<Map> list) {
       data = list;
@@ -30,16 +31,16 @@ void main() {
     setUp(() {
       cacheStorageSpy = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
-      mockFetch(FakeSurveysFactory.makeCacheJson());
+      mockFetch(CacheFactory.makeSurveyList());
     });
     test('Should call FetchCacheStorage with correct key', () async {
       await sut.load();
 
-      verify(cacheStorageSpy.fetch('surveys')).called(1);
+      verify(() => cacheStorageSpy.fetch('surveys')).called(1);
     });
 
     test('Should return a list of surveys on success', () async {
-      when(cacheStorageSpy.fetch(any)).thenAnswer((_) async => data);
+      when(() => cacheStorageSpy.fetch(any())).thenAnswer((_) async => data);
       final surveys = await sut.load();
 
       expect(surveys, [
@@ -56,22 +57,15 @@ void main() {
       ]);
     });
 
-    test('Should throw unexpectedError if cache is null', () async {
-      mockFetch(null);
-
-      final future = sut.load();
-      expect(future, throwsA(DomainError.unexpected));
-    });
-
     test('Should throw unexpectedError if cache is invalid', () async {
-      mockFetch(FakeSurveysFactory.makeInvalidCacheJson());
+      mockFetch(CacheFactory.makeInvalidSurveyList());
 
       final future = sut.load();
       expect(future, throwsA(DomainError.unexpected));
     });
 
     test('Should throw unexpectedError if cache is incomplete', () async {
-      mockFetch(FakeSurveysFactory.makeIncompleteCacheJson());
+      mockFetch(CacheFactory.makeIncompleteSurveyList());
 
       final future = sut.load();
       expect(future, throwsA(DomainError.unexpected));
@@ -85,11 +79,11 @@ void main() {
     });
   });
   group('validate', () {
-    CacheStorageSpy cacheStorageSpy;
-    LocalLoadSurveys sut;
-    List<Map> data;
+    late CacheStorageSpy cacheStorageSpy;
+    late LocalLoadSurveys sut;
+    late List<Map> data;
 
-    PostExpectation mockFetchCall() => when(cacheStorageSpy.fetch(any));
+    When mockFetchCall() => when(() => cacheStorageSpy.fetch(any()));
 
     void mockFetch(List<Map> list) {
       data = list;
@@ -102,50 +96,50 @@ void main() {
     setUp(() {
       cacheStorageSpy = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
-      mockFetch(FakeSurveysFactory.makeCacheJson());
+      mockFetch(CacheFactory.makeSurveyList());
     });
     test('Should call cacheStorage with correct key', () async {
       await sut.validate();
 
-      verify(cacheStorageSpy.fetch('surveys')).called(1);
+      verify(() => cacheStorageSpy.fetch('surveys')).called(1);
     });
 
     test('Should delete cache if it is invalid', () async {
-      mockFetch(FakeSurveysFactory.makeInvalidCacheJson());
+      mockFetch(CacheFactory.makeIncompleteSurveyList());
       await sut.validate();
 
-      verify(cacheStorageSpy.delete('surveys')).called(1);
+      verify(() => cacheStorageSpy.delete('surveys')).called(1);
     });
 
     test('Should delete cache if it is incomplete', () async {
-      mockFetch(FakeSurveysFactory.makeIncompleteCacheJson());
+      mockFetch(CacheFactory.makeIncompleteSurveyList());
       await sut.validate();
 
-      verify(cacheStorageSpy.delete('surveys')).called(1);
+      verify(() => cacheStorageSpy.delete('surveys')).called(1);
     });
 
     test('Should delete cache if fetch fails', () async {
       mockFetchError();
       await sut.validate();
 
-      verify(cacheStorageSpy.delete('surveys')).called(1);
+      verify(() => cacheStorageSpy.delete('surveys')).called(1);
     });
   });
 
   group('save', () {
-    CacheStorageSpy cacheStorageSpy;
-    LocalLoadSurveys sut;
-    List<SurveyEntity> surveys;
+    late CacheStorageSpy cacheStorageSpy;
+    late LocalLoadSurveys sut;
+    late List<SurveyEntity> surveys;
 
-    PostExpectation mockSaveCall() => when(
-        cacheStorageSpy.save(key: anyNamed('key'), value: anyNamed('value')));
+    When mockSaveCall() => when(() => cacheStorageSpy.save(
+        key: any(named: 'key'), value: any(named: 'value')));
 
     void mockSaveError() => mockSaveCall().thenThrow((_) async => Exception());
 
     setUp(() {
       cacheStorageSpy = CacheStorageSpy();
       sut = LocalLoadSurveys(cacheStorage: cacheStorageSpy);
-      surveys = FakeSurveysFactory.makeEntities();
+      surveys = EntityFactory.makeSurveyList();
     });
     test('Should call cacheStorage with correct values', () async {
       // pass a list of surveys json
@@ -166,7 +160,7 @@ void main() {
 
       await sut.save(surveys);
 
-      verify(cacheStorageSpy.save(key: 'surveys', value: list)).called(1);
+      verify(() => cacheStorageSpy.save(key: 'surveys', value: list)).called(1);
     });
 
     test('Should throw unexpected error if save throws', () async {

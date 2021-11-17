@@ -4,7 +4,7 @@ import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
@@ -13,35 +13,35 @@ import '../helpers/helpers.dart';
 class LoginPresenterSpy extends Mock implements LoginPresenter {}
 
 void main() {
-  LoginPresenter presenter;
-  StreamController<UIError> emailErrorController;
-  StreamController<UIError> passwordErrorController;
-  StreamController<bool> isFormValidController;
-  StreamController<bool> isLoadingController;
-  StreamController<UIError> mainErrorController;
-  StreamController<String> navigateToController;
+  late LoginPresenter presenter;
+  late StreamController<UIError?> emailErrorController;
+  late StreamController<UIError?> passwordErrorController;
+  late StreamController<bool> isFormValidController;
+  late StreamController<bool> isLoadingController;
+  late StreamController<UIError?> mainErrorController;
+  late StreamController<String?> navigateToController;
 
   void initStreams() {
-    emailErrorController = StreamController<UIError>();
-    passwordErrorController = StreamController<UIError>();
+    emailErrorController = StreamController<UIError?>();
+    passwordErrorController = StreamController<UIError?>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
-    mainErrorController = StreamController<UIError>();
-    navigateToController = StreamController<String>();
+    mainErrorController = StreamController<UIError?>();
+    navigateToController = StreamController<String?>();
   }
 
   void mockStreams() {
-    when(presenter.emailErrorStream)
+    when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
-    when(presenter.passwordErrorStream)
+    when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
-    when(presenter.isFormValidStream)
+    when(() => presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
-    when(presenter.isLoadingStream)
+    when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-    when(presenter.mainErrorStream)
+    when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
-    when(presenter.navigateToStream)
+    when(() => presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
   }
 
@@ -74,12 +74,12 @@ void main() {
     final email = faker.internet.email();
     await tester.enterText(find.bySemanticsLabel('Email'), email);
 
-    verify(presenter.validateEmail(email));
+    verify(() => presenter.validateEmail(email));
 
     final password = faker.internet.password();
     await tester.enterText(find.bySemanticsLabel('Senha'), password);
 
-    verify(presenter.validatePassword(password));
+    verify(() => presenter.validatePassword(password));
   });
 
   testWidgets('Should present error if email is invalid',
@@ -133,7 +133,7 @@ void main() {
     isFormValidController.add(true);
     await tester.pump();
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNotNull);
   });
 
@@ -144,7 +144,7 @@ void main() {
     isFormValidController.add(false);
     await tester.pump();
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, null);
   });
 
@@ -155,12 +155,12 @@ void main() {
     isFormValidController.add(true);
 
     await tester.pump();
-    final button = find.byType(RaisedButton);
+    final button = find.byType(ElevatedButton);
     await tester.ensureVisible(button);
     await tester.tap(button);
     await tester.pump();
 
-    verify(presenter.auth()).called(1);
+    verify(() => presenter.auth()).called(1);
   });
 
   testWidgets('Should present loading', (WidgetTester tester) async {
@@ -180,11 +180,6 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-
-    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should present error message if authentication fails',
@@ -239,6 +234,6 @@ void main() {
     await tester.tap(button);
     await tester.pump();
 
-    verify(presenter.goToSignUp()).called(1);
+    verify(() => presenter.goToSignUp()).called(1);
   });
 }

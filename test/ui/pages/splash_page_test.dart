@@ -3,16 +3,15 @@ import 'dart:async';
 import 'package:clean_flutter_manguinho/ui/pages/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/route_manager.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 import '../helpers/helpers.dart';
 
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
 void main() {
-  SplashPresenterSpy presenter;
-  StreamController<String> navigateToController;
+  late SplashPresenterSpy presenter;
+  late StreamController<String?> navigateToController;
 
   tearDown(() {
     navigateToController.close();
@@ -20,8 +19,8 @@ void main() {
 
   Future<void> loadPage(tester) async {
     presenter = SplashPresenterSpy();
-    navigateToController = StreamController<String>();
-    when(presenter.navigateToStream)
+    navigateToController = StreamController<String?>();
+    when(() => presenter.navigateToStream)
         .thenAnswer((_) => navigateToController.stream);
     await tester.pumpWidget(
         makePage(path: '/', page: () => SplashPage(presenter: presenter)));
@@ -36,7 +35,7 @@ void main() {
   testWidgets('Should call loadCurrentAccount on page load',
       (WidgetTester tester) async {
     await loadPage(tester);
-    verify(presenter.checkAccount()).called(1);
+    verify(() => presenter.checkAccount()).called(1);
   });
   testWidgets('Should change page', (WidgetTester tester) async {
     await loadPage(tester);

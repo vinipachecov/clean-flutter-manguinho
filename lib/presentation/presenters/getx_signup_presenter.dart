@@ -2,7 +2,6 @@ import 'package:clean_flutter_manguinho/domain/helpers/helpers.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/errors/errors.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
-import 'package:meta/meta.dart';
 import 'package:get/get.dart';
 import 'package:clean_flutter_manguinho/presentation/protocols/protocols.dart';
 import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
@@ -14,26 +13,26 @@ class GetxSignUpPresenter extends GetxController
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
-  String _email;
-  String _password;
-  String _passwordConfirmation;
-  String _name;
+  String? _email;
+  String? _password;
+  String? _passwordConfirmation;
+  String? _name;
 
-  var _emailError = Rx<UIError>();
-  var _nameError = Rx<UIError>();
-  var _passwordError = Rx<UIError>();
-  var _passwordConfirmationError = Rx<UIError>();
+  var _emailError = Rx<UIError?>(null);
+  var _nameError = Rx<UIError?>(null);
+  var _passwordError = Rx<UIError?>(null);
+  var _passwordConfirmationError = Rx<UIError?>(null);
 
-  Stream<UIError> get emailErrorStream => _emailError.stream;
-  Stream<UIError> get passwordErrorStream => _passwordError.stream;
-  Stream<UIError> get passwordConfirmationErrorStream =>
+  Stream<UIError?> get emailErrorStream => _emailError.stream;
+  Stream<UIError?> get passwordErrorStream => _passwordError.stream;
+  Stream<UIError?> get passwordConfirmationErrorStream =>
       _passwordConfirmationError.stream;
-  Stream<UIError> get nameErrorStream => _nameError.stream;
+  Stream<UIError?> get nameErrorStream => _nameError.stream;
 
   GetxSignUpPresenter(
-      {@required this.validation,
-      @required this.addAccount,
-      @required this.saveCurrentAccount});
+      {required this.validation,
+      required this.addAccount,
+      required this.saveCurrentAccount});
 
   void validateEmail(String email) {
     _email = email;
@@ -59,7 +58,7 @@ class GetxSignUpPresenter extends GetxController
     _validateForm();
   }
 
-  UIError _validateField(String field) {
+  UIError? _validateField(String field) {
     final formData = {
       'name': _name,
       'email': _email,
@@ -91,10 +90,10 @@ class GetxSignUpPresenter extends GetxController
     isLoading = true;
     try {
       final account = await addAccount.add(AddAccountParams(
-          email: _email,
-          name: _name,
-          password: _password,
-          passwordConfirmation: _passwordConfirmation));
+          email: _email!,
+          name: _name!,
+          password: _password!,
+          passwordConfirmation: _passwordConfirmation!));
       await saveCurrentAccount.save(account);
       navigateTo = "/surveys";
     } on DomainError catch (error) {

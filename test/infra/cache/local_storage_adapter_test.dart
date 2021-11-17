@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -8,15 +8,15 @@ import 'package:clean_flutter_manguinho/infra/cache/cache.dart';
 class LocalStorageSpy extends Mock implements LocalStorage {}
 
 void main() {
-  String key;
-  String value;
-  LocalStorageSpy localStorage;
-  LocalStorageAdapter sut;
+  late String key;
+  late String value;
+  late LocalStorageSpy localStorage;
+  late LocalStorageAdapter sut;
 
   void mockDeleteError() =>
-      when(localStorage.deleteItem(any)).thenThrow(Exception());
+      when(() => localStorage.deleteItem(any())).thenThrow(Exception());
   void mockSaveError() =>
-      when(localStorage.setItem(any, any)).thenThrow(Exception());
+      when(() => localStorage.setItem(any(), any())).thenThrow(Exception());
 
   setUp(() {
     key = faker.randomGenerator.string(5);
@@ -29,9 +29,9 @@ void main() {
     test('Should call localStorage with correct values', () async {
       await sut.save(key: key, value: value);
 
-      verify(localStorage.ready).called(1);
-      verify(localStorage.deleteItem(key)).called(1);
-      verify(localStorage.setItem(key, value)).called(1);
+      verify(() => localStorage.ready).called(1);
+      verify(() => localStorage.deleteItem(key)).called(1);
+      verify(() => localStorage.setItem(key, value)).called(1);
     });
 
     test('Should throw if deleteItem throws', () async {
@@ -53,8 +53,8 @@ void main() {
     test('Should call localStorage with correct values', () async {
       await sut.delete(key);
 
-      verify(localStorage.ready).called(1);
-      verify(localStorage.deleteItem(key)).called(1);
+      verify(() => localStorage.ready).called(1);
+      verify(() => localStorage.deleteItem(key)).called(1);
     });
 
     test('Should throw if deleteItem throws', () async {
@@ -66,9 +66,9 @@ void main() {
   });
 
   group('fetch', () {
-    String result;
+    late String result;
 
-    PostExpectation mockFetchCall() => when(localStorage.getItem(any));
+    When mockFetchCall() => when(() => localStorage.getItem(any()));
 
     void mockFetch() {
       result = faker.randomGenerator.string(20);
@@ -83,8 +83,8 @@ void main() {
     test('Should call localStorage with correct values', () async {
       await sut.fetch(key);
 
-      verify(localStorage.ready).called(1);
-      verify(localStorage.getItem(key)).called(1);
+      verify(() => localStorage.ready).called(1);
+      verify(() => localStorage.getItem(key)).called(1);
     });
 
     test('Should return same value as localStorage', () async {

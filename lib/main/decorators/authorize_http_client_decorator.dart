@@ -1,6 +1,5 @@
 import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:clean_flutter_manguinho/data/http/http.dart';
-import 'package:meta/meta.dart';
 
 class AuthorizeHttpClientDecorator implements HttpClient {
   final FetchSecureCacheStorage fetchSecureCacheStorage;
@@ -8,15 +7,15 @@ class AuthorizeHttpClientDecorator implements HttpClient {
   final HttpClient decoratee;
 
   AuthorizeHttpClientDecorator(
-      {@required this.fetchSecureCacheStorage,
-      @required this.deleteSecureCacheStorage,
-      @required this.decoratee});
+      {required this.fetchSecureCacheStorage,
+      required this.deleteSecureCacheStorage,
+      required this.decoratee});
 
   Future<dynamic> request({
-    String url,
-    String method,
-    Map body,
-    Map headers,
+    required String url,
+    required String method,
+    Map? body,
+    Map? headers,
   }) async {
     try {
       final token = await fetchSecureCacheStorage.fetch('token');

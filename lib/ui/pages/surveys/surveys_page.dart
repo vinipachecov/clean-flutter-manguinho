@@ -35,7 +35,7 @@ class _SurveysPageState extends State<SurveysPage>
   Widget build(BuildContext context) {
     final routeObserver = Get.find<RouteObserver>();
 
-    routeObserver.subscribe(this, ModalRoute.of(context));
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
     return Scaffold(
         appBar: AppBar(title: Text(R.strings.surveys)),
         body: Builder(
@@ -53,13 +53,13 @@ class _SurveysPageState extends State<SurveysPage>
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return ReloadScreen(
-                        error: snapshot.error,
+                        error: '${snapshot.error}',
                         reload: widget.presenter.loadData);
                   }
                   if (snapshot.hasData) {
                     return Provider(
                         create: (_) => widget.presenter,
-                        child: SurveyItems(snapshot.data));
+                        child: SurveyItems(snapshot.data!));
                   }
                   return SizedBox(height: 0);
                 });

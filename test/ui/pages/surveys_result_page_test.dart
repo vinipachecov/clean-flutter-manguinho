@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clean_flutter_manguinho/ui/pages/pages.dart';
-import 'package:image_test_utils/image_test_utils.dart';
-import 'package:mockito/mockito.dart';
-import '../../mocks/mocks.dart';
+import 'package:network_image_mock/network_image_mock.dart';
+import 'package:mocktail/mocktail.dart';
 import '../helpers/helpers.dart';
+import '../mocks/mocks.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
 void main() {
-  SurveyResultPresenterSpy presenter;
-  StreamController<bool> isLoadingController;
-  StreamController<bool> isSessionExpiredController;
-  StreamController<SurveyResultViewModel> surveyResultController;
+  late SurveyResultPresenterSpy presenter;
+  late StreamController<bool> isLoadingController;
+  late StreamController<bool> isSessionExpiredController;
+  late StreamController<SurveyResultViewModel?> surveyResultController;
 
   void initStreams() {
     isLoadingController = StreamController<bool>();
@@ -24,11 +24,11 @@ void main() {
   }
 
   void mockStreams() {
-    when(presenter.isLoadingStream)
+    when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-    when(presenter.surveyResultStream)
+    when(() => presenter.surveyResultStream)
         .thenAnswer((realInvocation) => surveyResultController.stream);
-    when(presenter.isSessionExpiredStream)
+    when(() => presenter.isSessionExpiredStream)
         .thenAnswer((realInvocation) => isSessionExpiredController.stream);
   }
 
@@ -42,7 +42,7 @@ void main() {
     presenter = SurveyResultPresenterSpy();
     initStreams();
     mockStreams();
-    await provideMockedNetworkImages(() async {
+    await mockNetworkImagesFor(() async {
       await tester.pumpWidget(makePage(
           path: '/survey_result/any_survey_id',
           page: () => SurveyResultPage(presenter)));
@@ -55,7 +55,7 @@ void main() {
   testWidgets('Should call LoadSurveyResult on page load',
       (WidgetTester tester) async {
     await loadPage(tester);
-    verify(presenter.loadData()).called(1);
+    verify(() => presenter.loadData()).called(1);
   });
 
   testWidgets('Should handle loading correctly', (WidgetTester tester) async {
@@ -75,11 +75,6 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-
-    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should present error if loadingSurveysStream fails',
@@ -103,15 +98,15 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Recarregar'));
 
-    verify(presenter.loadData()).called(2);
+    verify(() => presenter.loadData()).called(2);
   });
 
   testWidgets('Should present list if loadingSurveyResultStream suceeds',
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(FakeSurveyResultFactory.makeViewModel());
-    await provideMockedNetworkImages(() async {
+    surveyResultController.add(ViewModelFactory.makeSurveyResult());
+    await mockNetworkImagesFor(() async {
       await tester.pump();
     });
 
@@ -135,7 +130,7 @@ void main() {
     await loadPage(tester);
 
     surveyResultController.addError(UIError.unexpected.description);
-    await provideMockedNetworkImages(() async {
+    await mockNetworkImagesFor(() async {
       await tester.pump();
     });
 
@@ -164,38 +159,33 @@ void main() {
     /** use pumpAndSettle to wait for animations and stuff to happen */
     await tester.pumpAndSettle();
     expect(currentRoute, '/survey_result/any_survey_id');
-
-    isSessionExpiredController.add(null);
-    /** use pumpAndSettle to wait for animations and stuff to happen */
-    await tester.pumpAndSettle();
-    expect(currentRoute, '/survey_result/any_survey_id');
   });
 
   testWidgets('Should call save on list item click',
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(FakeSurveyResultFactory.makeViewModel());
-    await provideMockedNetworkImages(() async {
+    surveyResultController.add(ViewModelFactory.makeSurveyResult());
+    await mockNetworkImagesFor(() async {
       await tester.pump();
     });
 
     await tester.tap(find.text('Answer 1'));
 
-    verify(presenter.save(answer: 'Answer 1')).called(1);
+    verify(() => presenter.save(answer: 'Answer 1')).called(1);
   });
 
   testWidgets('Should not call on current answer click',
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(FakeSurveyResultFactory.makeViewModel());
-    await provideMockedNetworkImages(() async {
+    surveyResultController.add(ViewModelFactory.makeSurveyResult());
+    await mockNetworkImagesFor(() async {
       await tester.pump();
     });
 
     await tester.tap(find.text('Answer 0'));
 
-    verifyNever(presenter.save(answer: 'Answer 0'));
+    verifyNever(() => presenter.save(answer: 'Answer 0'));
   });
 }
