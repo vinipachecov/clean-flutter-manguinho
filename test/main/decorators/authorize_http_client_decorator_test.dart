@@ -3,20 +3,13 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/main/decorators/decorators.dart';
-import 'package:clean_flutter_manguinho/data/cache/cache.dart';
 import 'package:clean_flutter_manguinho/data/http/http.dart';
 
-class FetchSecureCacheStorageSpy extends Mock
-    implements FetchSecureCacheStorage {}
-
-class DeleteSecureCacheStorageSpy extends Mock
-    implements DeleteSecureCacheStorage {}
-
-class HttpClientSpy extends Mock implements HttpClient {}
+import '../../data/mocks/http_client_spy.dart';
+import '../../data/mocks/secure_cache_storage_spy.dart';
 
 void main() {
-  late FetchSecureCacheStorageSpy fetchSecureCacheStorageSpy;
-  late DeleteSecureCacheStorageSpy deleteSecureCacheStorageSpy;
+  late SecureCacheStorageSpy secureCacheStorage;
   late AuthorizeHttpClientDecorator sut;
   late String url;
   late String method;
@@ -25,55 +18,26 @@ void main() {
   late String token;
   late String httpResponse;
 
-  When mockTokenCall() {
-    return when(() => fetchSecureCacheStorageSpy.fetch(any()));
-  }
-
-  void mockToken() {
-    token = faker.guid.guid();
-    mockTokenCall().thenAnswer((_) async => token);
-  }
-
-  When mockHttpResponseCall() {
-    return when(() => httpClientSpy.request(
-        url: any(named: 'url'),
-        method: any(named: 'method'),
-        body: any(named: 'body'),
-        headers: any(named: 'headers')));
-  }
-
-  void mockHttpResponse() {
-    httpResponse = faker.randomGenerator.string(50);
-    mockHttpResponseCall().thenAnswer((_) async => httpResponse);
-  }
-
-  void mockHttpResponseError(error) {
-    mockHttpResponseCall().thenThrow(error);
-  }
-
-  void mockTokenError() {
-    mockTokenCall().thenThrow(Exception());
-  }
-
   setUp(() {
-    fetchSecureCacheStorageSpy = FetchSecureCacheStorageSpy();
-    deleteSecureCacheStorageSpy = DeleteSecureCacheStorageSpy();
+    secureCacheStorage = SecureCacheStorageSpy();
     httpClientSpy = HttpClientSpy();
     sut = AuthorizeHttpClientDecorator(
-        fetchSecureCacheStorage: fetchSecureCacheStorageSpy,
-        deleteSecureCacheStorage: deleteSecureCacheStorageSpy,
+        fetchSecureCacheStorage: secureCacheStorage,
+        deleteSecureCacheStorage: secureCacheStorage,
         decoratee: httpClientSpy);
     url = faker.internet.httpUrl();
     method = faker.randomGenerator.string(10);
     body = {'any_key': 'any_value'};
-    mockToken();
-    mockHttpResponse();
+    token = faker.guid.guid();
+    httpResponse = faker.randomGenerator.string(50);
+    secureCacheStorage.mockFetch(token);
+    httpClientSpy.mockRequest(httpResponse);
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
     await sut.request(url: url, method: method, body: body);
 
-    verify(() => fetchSecureCacheStorageSpy.fetch('token')).called(1);
+    verify(() => secureCacheStorage.fetch('token')).called(1);
   });
 
   test('Should call decoratee with access token on header', () async {
@@ -99,31 +63,31 @@ void main() {
 
   test('Should throw ForbiddenError if FetchSecureCacheStorage throws',
       () async {
-    mockTokenError();
+    secureCacheStorage.mockFetchError();
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(() => deleteSecureCacheStorageSpy.delete('token')).called(1);
+    verify(() => secureCacheStorage.delete('token')).called(1);
   });
 
   test('Should rethrow if decoratee throws', () async {
-    mockHttpResponseError(HttpError.badRequest);
+    httpClientSpy.mockRequestError(HttpError.badRequest);
     final future = sut.request(url: url, method: method, body: body);
 
     expect(future, throwsA(HttpError.badRequest));
   });
 
   test('Should delete cache if request throws ForbiddenError', () async {
-    mockHttpResponseError(HttpError.forbidden);
+    httpClientSpy.mockRequestError(HttpError.forbidden);
     final future = sut.request(url: url, method: method, body: body);
 
     /**
      * untilCalled is a helper method from Mockito to ensure that our test
      * gives enough time for an async method to run. 
      */
-    await untilCalled(() => deleteSecureCacheStorageSpy.delete('token'));
+    await untilCalled(() => secureCacheStorage.delete('token'));
 
     expect(future, throwsA(HttpError.forbidden));
-    verify(() => deleteSecureCacheStorageSpy.delete('token')).called(1);
+    verify(() => secureCacheStorage.delete('token')).called(1);
   });
 }
