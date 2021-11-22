@@ -3,36 +3,19 @@ import 'package:test/test.dart';
 
 import 'package:clean_flutter_manguinho/domain/entities/survey_entity.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
-import 'package:clean_flutter_manguinho/domain/usecases/load_surveys.dart';
 
 import 'package:clean_flutter_manguinho/presentation/presenters/getx_surveys_presenter.dart';
 
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
 import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 
+import '../../domain/mocks/load_surveys_spy.dart';
 import '../../domain/mocks/mocks.dart';
-
-class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
   late LoadSurveysSpy loadSurveys;
   late GetxSurveysPresenter sut;
   late List<SurveyEntity> surveys;
-
-  When mockloadSurveysCall() => when(() => loadSurveys.load());
-
-  void mockLoadSurveys(List<SurveyEntity> data) {
-    surveys = data;
-    mockloadSurveysCall().thenAnswer((_) async => surveys);
-  }
-
-  void mockLoadSurveysError() {
-    mockloadSurveysCall().thenThrow(DomainError.unexpected);
-  }
-
-  void mockAccessDeniedError() {
-    mockloadSurveysCall().thenThrow(DomainError.accessDenied);
-  }
 
   setUp(() {
     // Mock Dependencies
@@ -41,8 +24,10 @@ void main() {
     // System Under Test
     sut = GetxSurveysPresenter(loadSurveys: loadSurveys);
 
+    surveys = EntityFactory.makeSurveyList();
+
     // Mock Success Case
-    mockLoadSurveys(EntityFactory.makeSurveyList());
+    loadSurveys.mockLoadSurveys(surveys);
   });
   test('Should call loadSurveys on loadData', () async {
     await sut.loadData();
@@ -70,7 +55,7 @@ void main() {
   });
 
   test('Should emit correct events on failure', () async {
-    mockLoadSurveysError();
+    loadSurveys.mockLoadSurveysError(DomainError.unexpected);
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     sut.surveysStream.listen(null,
         onError: expectAsync1(
@@ -79,7 +64,7 @@ void main() {
   });
 
   test('Should emit correct events on access denied', () async {
-    mockAccessDeniedError();
+    loadSurveys.mockLoadSurveysError(DomainError.accessDenied);
     expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
     expectLater(sut.isSessionExpiredStream, emits(true));
     await sut.loadData();

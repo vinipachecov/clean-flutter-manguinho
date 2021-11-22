@@ -6,15 +6,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:clean_flutter_manguinho/domain/helpers/domain_error.dart';
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
-import 'package:clean_flutter_manguinho/domain/usecases/usecases.dart';
 import 'package:clean_flutter_manguinho/presentation/presenters/presenters.dart';
 import 'package:clean_flutter_manguinho/ui/pages/survey_result/survey_result.dart';
-
 import '../../domain/mocks/mocks.dart';
-
-class LoadSurveyResultSpy extends Mock implements LoadSurveyResult {}
-
-class SaveSurveyResultSpy extends Mock implements SaveSurveyResult {}
 
 void main() {
   // use case
@@ -28,33 +22,7 @@ void main() {
   late SurveyResultEntity loadResult;
   late SurveyResultEntity saveResult;
   late String surveyId;
-
-  //
   late String answer;
-
-  When mockLoadSurveyResultCall() =>
-      when(() => loadSurveyResultSpy.loadBySurvey(surveyId: surveyId));
-
-  void mockLoadSurveyResult(SurveyResultEntity data) {
-    loadResult = data;
-    mockLoadSurveyResultCall().thenAnswer((_) async => data);
-  }
-
-  void mockLoadSurveyResultError(error) {
-    mockLoadSurveyResultCall().thenThrow(error);
-  }
-
-  When mockSaveSurveyResultCall() =>
-      when(() => saveSurveyResultSpy.save(answer: any(named: 'answer')));
-
-  void mockSaveSurveyResult(SurveyResultEntity data) {
-    saveResult = data;
-    mockSaveSurveyResultCall().thenAnswer((_) async => saveResult);
-  }
-
-  void mockSaveSurveyResultError(error) {
-    mockSaveSurveyResultCall().thenThrow(error);
-  }
 
   SurveyResultViewModel mapToViewModel(SurveyResultEntity entity) =>
       SurveyResultViewModel(
@@ -86,8 +54,10 @@ void main() {
         surveyId: surveyId);
 
     // Mock Success Case
-    mockLoadSurveyResult(EntityFactory.makeSurveyResult());
-    mockSaveSurveyResult(EntityFactory.makeSurveyResult());
+    loadResult = EntityFactory.makeSurveyResult();
+    loadSurveyResultSpy.mockLoadBySurvey(loadResult);
+    saveResult = EntityFactory.makeSurveyResult();
+    saveSurveyResultSpy.mockSaveSurveyResult(saveResult);
   });
 
   group('loadData', () {
@@ -111,7 +81,7 @@ void main() {
     });
 
     test('Should emit correct events on failure', () async {
-      mockLoadSurveyResultError(DomainError.unexpected);
+      loadSurveyResultSpy.mockLoadBySurveyError(DomainError.unexpected);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       sut.surveyResultStream.listen(null,
           onError: expectAsync1(
@@ -120,7 +90,7 @@ void main() {
     });
 
     test('Should emit correct events on access denied', () async {
-      mockLoadSurveyResultError(DomainError.accessDenied);
+      loadSurveyResultSpy.mockLoadBySurveyError(DomainError.accessDenied);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       expectLater(sut.isSessionExpiredStream, emits(true));
       await sut.loadData();
@@ -148,7 +118,7 @@ void main() {
     });
 
     test('Should emit correct events on failure', () async {
-      mockSaveSurveyResultError(DomainError.unexpected);
+      saveSurveyResultSpy.mockSaveSurveyResultError(DomainError.unexpected);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       sut.surveyResultStream.listen(null,
           onError: expectAsync1(
@@ -157,7 +127,7 @@ void main() {
     });
 
     test('Should emit correct events on access denied', () async {
-      mockSaveSurveyResultError(DomainError.accessDenied);
+      saveSurveyResultSpy.mockSaveSurveyResultError(DomainError.accessDenied);
       expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
       expectLater(sut.isSessionExpiredStream, emits(true));
       await sut.save(answer: answer);
