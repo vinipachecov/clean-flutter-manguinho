@@ -274,7 +274,7 @@ void main() {
   });
 
   test('Should emit  UnexpectedError if SaveCurrentAccount fails', () async {
-    saveCurrentAccount.mockSaveCurrentAccount();
+    saveCurrentAccount.mockSaveCurrentAccountError();
     sut.validateName(name);
     sut.validateEmail(email);
     sut.validatePassword(password);
@@ -330,6 +330,7 @@ void main() {
 
   test('Should change page on success', () async {
     sut.validateEmail(email);
+    sut.validateName(name);
     sut.validatePassword(password);
     sut.validatePassword(password);
     sut.validatePasswordConfirmation(passwordConfirmation);

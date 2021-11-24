@@ -8,40 +8,18 @@ import 'package:network_image_mock/network_image_mock.dart';
 import 'package:mocktail/mocktail.dart';
 import '../helpers/helpers.dart';
 import '../mocks/mocks.dart';
-
-class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
+import '../mocks/survey_result_presenter_spy.dart';
 
 void main() {
   late SurveyResultPresenterSpy presenter;
-  late StreamController<bool> isLoadingController;
-  late StreamController<bool> isSessionExpiredController;
-  late StreamController<SurveyResultViewModel?> surveyResultController;
-
-  void initStreams() {
-    isLoadingController = StreamController<bool>();
-    surveyResultController = StreamController<SurveyResultViewModel>();
-    isSessionExpiredController = StreamController<bool>();
-  }
-
-  void mockStreams() {
-    when(() => presenter.isLoadingStream)
-        .thenAnswer((_) => isLoadingController.stream);
-    when(() => presenter.surveyResultStream)
-        .thenAnswer((realInvocation) => surveyResultController.stream);
-    when(() => presenter.isSessionExpiredStream)
-        .thenAnswer((realInvocation) => isSessionExpiredController.stream);
-  }
 
   void closeStreams() {
-    isLoadingController.close();
-    surveyResultController.close();
-    isSessionExpiredController.close();
+    presenter.dispose();
   }
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = SurveyResultPresenterSpy();
-    initStreams();
-    mockStreams();
+
     await mockNetworkImagesFor(() async {
       await tester.pumpWidget(makePage(
           path: '/survey_result/any_survey_id',
@@ -61,17 +39,17 @@ void main() {
   testWidgets('Should handle loading correctly', (WidgetTester tester) async {
     await loadPage(tester);
 
-    isLoadingController.add(true);
+    presenter.emitIsLoading();
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    isLoadingController.add(false);
+    presenter.emitIsLoading(false);
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
 
-    isLoadingController.add(true);
+    presenter.emitIsLoading();
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -81,7 +59,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.addError(UIError.unexpected.description);
+    presenter.emitSurveyResultError(UIError.unexpected.description);
     await tester.pump();
 
     expect(find.text("Algo errado aconteceu. Tente novamente em breve."),
@@ -94,7 +72,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.addError(UIError.unexpected.description);
+    presenter.emitSurveyResultError(UIError.unexpected.description);
     await tester.pump();
     await tester.tap(find.text('Recarregar'));
 
@@ -105,7 +83,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(ViewModelFactory.makeSurveyResult());
+    presenter.emitSurveyResult(ViewModelFactory.makeSurveyResult());
     await mockNetworkImagesFor(() async {
       await tester.pump();
     });
@@ -129,7 +107,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.addError(UIError.unexpected.description);
+    presenter.emitSurveyResultError(UIError.unexpected.description);
     await mockNetworkImagesFor(() async {
       await tester.pump();
     });
@@ -143,7 +121,7 @@ void main() {
   testWidgets('Should logout', (WidgetTester tester) async {
     await loadPage(tester);
 
-    isSessionExpiredController.add(true);
+    presenter.emitSessionExpired();
     await tester.pump();
 
     await tester.pumpAndSettle();
@@ -155,7 +133,7 @@ void main() {
   testWidgets('Should not logout', (WidgetTester tester) async {
     await loadPage(tester);
 
-    isSessionExpiredController.add(false);
+    presenter.emitSessionExpired(false);
     /** use pumpAndSettle to wait for animations and stuff to happen */
     await tester.pumpAndSettle();
     expect(currentRoute, '/survey_result/any_survey_id');
@@ -165,7 +143,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(ViewModelFactory.makeSurveyResult());
+    presenter.emitSurveyResult(ViewModelFactory.makeSurveyResult());
     await mockNetworkImagesFor(() async {
       await tester.pump();
     });
@@ -179,7 +157,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(ViewModelFactory.makeSurveyResult());
+    presenter.emitSurveyResult(ViewModelFactory.makeSurveyResult());
     await mockNetworkImagesFor(() async {
       await tester.pump();
     });
