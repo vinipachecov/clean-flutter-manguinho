@@ -1,6 +1,7 @@
 import './survey_result.dart';
+import 'package:flutter/material.dart';
 
-abstract class SurveyResultPresenter {
+abstract class SurveyResultPresenter implements Listenable {
   Stream<bool> get isLoadingStream;
   Stream<SurveyResultViewModel?> get surveyResultStream;
   Stream<bool> get isSessionExpiredStream;

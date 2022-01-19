@@ -1,6 +1,7 @@
 import '../../helpers/errors/ui_error.dart';
+import 'package:flutter/material.dart';
 
-abstract class SignUpPresenter {
+abstract class SignUpPresenter implements Listenable {
   Stream<UIError?> get nameErrorStream;
   Stream<UIError?> get emailErrorStream;
   Stream<UIError?> get passwordErrorStream;

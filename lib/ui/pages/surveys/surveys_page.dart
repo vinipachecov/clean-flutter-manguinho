@@ -57,7 +57,7 @@ class _SurveysPageState extends State<SurveysPage>
                         reload: widget.presenter.loadData);
                   }
                   if (snapshot.hasData) {
-                    return Provider(
+                    return ListenableProvider(
                         create: (_) => widget.presenter,
                         child: SurveyItems(snapshot.data!));
                   }

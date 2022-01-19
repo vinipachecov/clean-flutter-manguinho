@@ -80,6 +80,4 @@ class GetxLoginPresenter extends GetxController
   void goToSignUp() {
     navigateTo = "/signup";
   }
-
-  void dispose() {}
 }

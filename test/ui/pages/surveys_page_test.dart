@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:clean_flutter_manguinho/ui/helpers/helpers.dart';
-import 'package:clean_flutter_manguinho/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

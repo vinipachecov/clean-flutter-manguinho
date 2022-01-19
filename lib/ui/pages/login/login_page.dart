@@ -36,7 +36,7 @@ class LoginPage extends StatelessWidget
                   ),
                   Padding(
                     padding: const EdgeInsets.all(32),
-                    child: Provider(
+                    child: ListenableProvider(
                       create: (context) => presenter,
                       child: Form(
                         child: Column(
